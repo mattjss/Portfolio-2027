@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>fabric</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300&display=swap" rel="stylesheet">
+  <style>
+    :root { --sz: 422px; }
+    @media (min-width: 1440px) { :root { --sz: 576px; } }
+    @media (max-width: 480px)  { :root { --sz: 322px; } }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%; height: 100%; background: #101010;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; font-family: system-ui, sans-serif; cursor: none;
+    }
+    #wrap { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+    canvas {
+      width: 100vmin; height: 100vmin;
+      display: block;
+      touch-action: pan-x;
+    }
+    #meta { display: flex; align-items: center; gap: 24px; }
+  </style>
+</head>
+<body>
+  <div id="wrap">
+    <canvas id="c"></canvas>
+  </div>
+<script>
+  const SZ   = 422;
+  const COLS = 22, ROWS = 22;
+  const PAD  = 28;
+  const GAP  = (SZ - PAD * 2) / (COLS - 1);
+
+  const K_STRUCT = 380;
+  const K_SHEAR  = 190;
+  const K_ANCHOR = 18;
+  const DAMP     = 0.89;
+  const CURSOR_R = 44;
+
+  const canvas = document.getElementById('c');
+  canvas.width = canvas.height = SZ;
+  const ctx = canvas.getContext('2d');
+
+  let mx = SZ/2, my = SZ/2, isInside = false;
+  const waves = [];
+  let flashAlpha = 0;
+
+  // Particles
+  const pts = [];
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      pts.push({
+        x:  PAD + c * GAP,
+        y:  PAD + r * GAP,
+        rx: PAD + c * GAP,  // rest x
+        ry: PAD + r * GAP,  // rest y
+        vx: 0, vy: 0,
+        ax: 0, ay: 0,
+      });
+    }
+  }
+
+  // Precompute springs
+  const structSprings = [];
+  const shearSprings  = [];
+
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const i = r * COLS + c;
+      if (c < COLS-1) { // horizontal
+        const j = i + 1;
+        structSprings.push([i, j, Math.hypot(pts[j].rx-pts[i].rx, pts[j].ry-pts[i].ry), K_STRUCT]);
+      }
+      if (r < ROWS-1) { // vertical
+        const j = i + COLS;
+        structSprings.push([i, j, Math.hypot(pts[j].rx-pts[i].rx, pts[j].ry-pts[i].ry), K_STRUCT]);
+      }
+      if (c < COLS-1 && r < ROWS-1) { // diagonal ↘
+        const j = i + COLS + 1;
+        shearSprings.push([i, j, Math.hypot(pts[j].rx-pts[i].rx, pts[j].ry-pts[i].ry), K_SHEAR]);
+      }
+      if (c > 0 && r < ROWS-1) { // diagonal ↙
+        const j = i + COLS - 1;
+        shearSprings.push([i, j, Math.hypot(pts[j].rx-pts[i].rx, pts[j].ry-pts[i].ry), K_SHEAR]);
+      }
+    }
+  }
+
+  const allSprings = [...structSprings, ...shearSprings];
+
+  canvas.addEventListener('mousemove', e => {
+    const r = canvas.getBoundingClientRect();
+    mx = (e.clientX - r.left) * (SZ / r.width);
+    my = (e.clientY - r.top)  * (SZ / r.height);
+    isInside = true;
+    maybeTick(e.clientX, e.clientY);
+  });
+  canvas.addEventListener('mouseenter', () => isInside = true);
+  canvas.addEventListener('mouseleave', () => isInside = false);
+
+  canvas.addEventListener('pointerdown', e => {
+    const r  = canvas.getBoundingClientRect();
+    const ex = (e.clientX - r.left) * (SZ / r.width);
+    const ey = (e.clientY - r.top)  * (SZ / r.height);
+    pts.forEach(p => {
+      const dx = p.x - ex, dy = p.y - ey;
+      const d = Math.sqrt(dx*dx + dy*dy) + 1;
+      p.vx += (dx/d) * 4200 / d;
+      p.vy += (dy/d) * 4200 / d;
+    });
+    waves.push({ x: ex, y: ey, r: 0, born: 0 });
+    flashAlpha = 0.14;
+    playClick();
+  });
+
+  canvas.addEventListener('touchstart', e => {
+    const t = e.touches[0], r = canvas.getBoundingClientRect();
+    mx = (t.clientX - r.left) * (SZ / r.width);
+    my = (t.clientY - r.top)  * (SZ / r.height);
+    isInside = true;
+  }, { passive: true });
+  canvas.addEventListener('touchmove', e => {
+    const t = e.touches[0], r = canvas.getBoundingClientRect();
+    mx = (t.clientX - r.left) * (SZ / r.width);
+    my = (t.clientY - r.top)  * (SZ / r.height);
+  }, { passive: true });
+  canvas.addEventListener('touchend', () => isInside = false);
+
+  function update(dt) {
+    pts.forEach(p => { p.ax = 0; p.ay = 0; });
+
+    // Spring forces
+    allSprings.forEach(([i, j, restLen, k]) => {
+      const pi = pts[i], pj = pts[j];
+      const dx = pj.x - pi.x, dy = pj.y - pi.y;
+      const d  = Math.sqrt(dx*dx + dy*dy) || 0.001;
+      const f  = k * (d - restLen);
+      const fx = (dx/d) * f, fy = (dy/d) * f;
+      pi.ax += fx; pi.ay += fy;
+      pj.ax -= fx; pj.ay -= fy;
+    });
+
+    // Anchor springs (pull toward rest position)
+    pts.forEach(p => {
+      p.ax += (p.rx - p.x) * K_ANCHOR;
+      p.ay += (p.ry - p.y) * K_ANCHOR;
+    });
+
+    // Cursor repulsion
+    if (isInside) {
+      pts.forEach(p => {
+        const dx = p.x - mx, dy = p.y - my;
+        const d = Math.sqrt(dx*dx + dy*dy);
+        if (d < CURSOR_R && d > 0) {
+          const push = (CURSOR_R - d) / CURSOR_R;
+          p.ax += (dx/d) * push * 2200;
+          p.ay += (dy/d) * push * 2200;
+        }
+      });
+    }
+
+    pts.forEach(p => {
+      p.vx = (p.vx + p.ax * dt) * DAMP;
+      p.vy = (p.vy + p.ay * dt) * DAMP;
+      p.x  += p.vx * dt;
+      p.y  += p.vy * dt;
+    });
+
+    for (let i = waves.length - 1; i >= 0; i--) {
+      waves[i].born += dt;
+      waves[i].r    += 285 * dt;
+      if (waves[i].r > SZ * 1.5) waves.splice(i, 1);
+    }
+    flashAlpha *= 0.84;
+  }
+
+  function draw() {
+    ctx.fillStyle = '#101010';
+    ctx.fillRect(0, 0, SZ, SZ);
+
+    if (flashAlpha > 0.004) {
+      ctx.fillStyle = `rgba(255,255,255,${flashAlpha.toFixed(3)})`;
+      ctx.fillRect(0, 0, SZ, SZ);
+    }
+
+    // Shockwave rings
+    waves.forEach(w => {
+      const a = Math.max(0, 0.40 * (1 - w.born * 1.5));
+      ctx.beginPath();
+      ctx.arc(w.x, w.y, w.r, 0, Math.PI*2);
+      ctx.strokeStyle = `rgba(255,255,255,${a.toFixed(3)})`;
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+    });
+
+    // Base mesh (dim)
+    ctx.beginPath();
+    structSprings.forEach(([i, j]) => {
+      ctx.moveTo(pts[i].x, pts[i].y);
+      ctx.lineTo(pts[j].x, pts[j].y);
+    });
+    ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+    ctx.lineWidth = 0.75;
+    ctx.stroke();
+
+    // Taut / strained springs (bright overlay)
+    ctx.beginPath();
+    let anyTaut = false;
+    structSprings.forEach(([i, j, restLen]) => {
+      const dx = pts[j].x - pts[i].x, dy = pts[j].y - pts[i].y;
+      const d  = Math.sqrt(dx*dx + dy*dy);
+      if (Math.abs(d - restLen) / restLen > 0.035) {
+        ctx.moveTo(pts[i].x, pts[i].y);
+        ctx.lineTo(pts[j].x, pts[j].y);
+        anyTaut = true;
+      }
+    });
+    if (anyTaut) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.65)';
+      ctx.lineWidth = 1.1;
+      ctx.stroke();
+    }
+
+    // Cursor ring
+    if (isInside) {
+      const grd = ctx.createRadialGradient(mx, my, 0, mx, my, CURSOR_R);
+      grd.addColorStop(0,   'rgba(255,255,255,0.06)');
+      grd.addColorStop(0.7, 'rgba(255,255,255,0.02)');
+      grd.addColorStop(1,   'rgba(255,255,255,0)');
+      ctx.beginPath();
+      ctx.arc(mx, my, CURSOR_R, 0, Math.PI*2);
+      ctx.fillStyle = grd;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(mx, my, 2, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(255,255,255,0.50)';
+      ctx.fill();
+    }
+  }
+
+  let audioMuted = new URLSearchParams(location.search).has('embed');
+  window.addEventListener('message', e => { if (e.data?.type === 'setMuted') audioMuted = !!e.data.muted; });
+  let hoverAudio = null, clickAudio = null;
+  function initAudio() {
+    if (hoverAudio) return;
+    hoverAudio = new Audio('./sounds/hover-cloth.wav');
+    hoverAudio.volume = 0.35;
+    clickAudio = new Audio('./sounds/selection.mp3');
+    clickAudio.volume = 0.42;
+  }
+  function playHover() { if (audioMuted) return; initAudio(); hoverAudio.currentTime = 0; hoverAudio.play().catch(()=>{}); }
+  function playClick() { if (audioMuted) return; initAudio(); clickAudio.currentTime = 0; clickAudio.play().catch(()=>{}); }
+
+  let lastTick = {x:0,y:0}, lastTickMs = 0;
+  function maybeTick(x, y) {
+    const dx = x - lastTick.x, dy = y - lastTick.y;
+    if (dx*dx + dy*dy < 48*48) return;
+    const now = performance.now();
+    if (now - lastTickMs < 220) return;
+    lastTick = {x, y}; lastTickMs = now;
+    playHover();
+  }
+
+  let lastT = performance.now();
+  function loop(now) {
+    const dt = Math.min((now - lastT) / 1000, 0.05);
+    lastT = now;
+    update(dt);
+    draw();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+</script>
+</body>
+</html>

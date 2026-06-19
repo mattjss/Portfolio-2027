@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>flock</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%; height: 100%; background: #101010;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; font-family: 'Geist Mono', monospace; cursor: none;
+    }
+    #wrap { position: relative; width: 422px; height: 422px; }
+    canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-x; }
+    #meta {
+      position: absolute; top: 14px; left: 14px; z-index: 10;
+      display: flex; align-items: center; gap: 18px;
+      pointer-events: none;
+    }
+    .stat {
+      font-size: 10px; font-weight: 300; line-height: 1; letter-spacing: 0.04em;
+      color: rgba(255,255,255,0.2);
+    }
+    #scoreVal, #flockVal { font-weight: 400; color: rgba(255,255,255,0.5); }
+  </style>
+</head>
+<body>
+  <div id="wrap">
+    <canvas id="c"></canvas>
+    <div id="meta">
+      <span class="stat">score <span id="scoreVal">0</span></span>
+      <span class="stat">flock <span id="flockVal">150</span></span>
+      <span class="stat" id="hintLabel">herd into the ring</span>
+    </div>
+  </div>
+<script>
+  // ── Supabase ───────────────────────────────────────────────────────────────
+  const SB_URL = 'https://rpgjmulbfjoennhwftla.supabase.co';
+  const SB_KEY = 'sb_publishable_Po1mlOdTqsOHCzZZbiKlcA_cEozhwLR';
+
+  let lastVisitText = '';
+
+  async function fetchGeo() {
+    try {
+      const r = await fetch('https://ipapi.co/json/');
+      if (!r.ok) return {};
+      const d = await r.json();
+      return { city: d.city || null, region: d.region || null };
+    } catch { return {}; }
+  }
+
+  async function sbInsert(score, city, region) {
+    try {
+      await fetch(`${SB_URL}/rest/v1/scores`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SB_KEY,
+          'Authorization': `Bearer ${SB_KEY}`,
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ score, city: city || null, region: region || null })
+      });
+    } catch {}
+  }
+
+  async function sbLastScore() {
+    try {
+      const r = await fetch(
+        `${SB_URL}/rest/v1/scores?select=score,city,region&order=created_at.desc&limit=1`,
+        { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } }
+      );
+      const d = await r.json();
+      return Array.isArray(d) && d.length ? d[0] : null;
+    } catch { return null; }
+  }
+
+  function formatLastVisit(row) {
+    if (!row) return '';
+    const loc = [row.city, row.region].filter(Boolean).join(', ') || 'somewhere';
+    return `last played by a visitor from ${loc} — ${row.score} pt${row.score !== 1 ? 's' : ''}`;
+  }
+
+  // Load previous visitor score for end screen
+  sbLastScore().then(row => {
+    if (row) lastVisitText = formatLastVisit(row);
+  });
+
+  // ── Canvas setup ───────────────────────────────────────────────────────────
+  const SZ = 422;
+  const canvas = document.getElementById('c');
+  canvas.width = canvas.height = SZ;
+  const ctx = canvas.getContext('2d');
+
+  const scoreEl   = document.getElementById('scoreVal');
+  const flockEl   = document.getElementById('flockVal');
+  const hintLabel = document.getElementById('hintLabel');
+
+  // ── Constants ──────────────────────────────────────────────────────────────
+  const N         = 150;
+  const MAX_SPEED = 125;
+  const MIN_SPEED = 36;
+  const MAX_FORCE = 380;
+  const SEP_R = 25, ALI_R = 52, COH_R = 52;
+  const SEP_W = 2.1, ALI_W = 1.05, COH_W = 0.80;
+  const AVOID_R = 82, AVOID_W = 4.8;
+  const CONN_R  = 38;
+  const TRAIL   = 26;
+
+  const ZONE_R       = 65;
+  const FILL_THRESH  = 0.60;
+  const HOLD_TIME    = 1.5;
+  const GAMEOVER_MIN = 40;
+  const EDGE_MARGIN  = 30;
+
+  const PRED_SPEED   = 62;
+  const PRED_HUNT_R  = 148;
+  const PRED_KILL_R  = 17;
+  const PRED_FLEE_R  = 88;
+  const PRED_KILL_CD = 2.6;
+
+  const WIND_STR     = 20;
+  const WIND_CYCLE   = 11;
+
+  // ── State ──────────────────────────────────────────────────────────────────
+  let mx = SZ/2, my = SZ/2, isInside = false;
+  const waves = [];
+  let flashAlpha = 0;
+  const edgeFlashes = [];
+  let zone       = { x: 0, y: 0 };
+  let zoneBreath = 0, zoneHoldT = 0, zoneFlash = 0, zonePulseR = 0, zonePulseA = 0;
+  let score      = 0;
+  let gameOver   = false;
+  let gameOverHandled = false;
+  let insideCount = 0;
+  let boids = [];
+
+  let pred = { x: SZ*0.15, y: SZ*0.15, vx: PRED_SPEED*0.6, vy: PRED_SPEED*0.6, killTimer: 0 };
+
+  let windAngle       = Math.random() * Math.PI * 2;
+  let windTargetAngle = windAngle;
+  let windTimer       = 0;
+
+  function spawnBoids() {
+    boids = [];
+    for (let i = 0; i < N; i++) {
+      const ang = Math.random() * Math.PI * 2;
+      const spd = MIN_SPEED + Math.random() * 30;
+      boids.push({
+        x:  SZ/2 + (Math.random()-0.5) * 80,
+        y:  SZ/2 + (Math.random()-0.5) * 80,
+        vx: Math.cos(ang) * spd,
+        vy: Math.sin(ang) * spd,
+        trail: [], alignScore: 0.5,
+      });
+    }
+  }
+
+  function spawnZone() {
+    zone.x = EDGE_MARGIN + ZONE_R + Math.random() * (SZ - 2*(EDGE_MARGIN + ZONE_R));
+    zone.y = EDGE_MARGIN + ZONE_R + Math.random() * (SZ - 2*(EDGE_MARGIN + ZONE_R));
+    zoneHoldT = 0; zoneFlash = 0; zonePulseR = 0; zonePulseA = 0;
+  }
+
+  function restart() {
+    score = 0; gameOver = false; gameOverHandled = false;
+    waves.length = 0; edgeFlashes.length = 0; flashAlpha = 0;
+    spawnBoids(); spawnZone();
+    pred.x = SZ * 0.15; pred.y = SZ * 0.15;
+    pred.vx = PRED_SPEED * 0.6; pred.vy = PRED_SPEED * 0.6;
+    pred.killTimer = 0;
+    windAngle = Math.random() * Math.PI * 2;
+    windTargetAngle = windAngle; windTimer = 0;
+    scoreEl.textContent = '0';
+    flockEl.textContent = String(N);
+    hintLabel.textContent = 'herd into the ring';
+  }
+
+  function updatePredator(dt) {
+    pred.killTimer = Math.max(0, pred.killTimer - dt);
+
+    // Find nearest boid
+    let nearest = null, nearestD2 = Infinity;
+    for (let i = 0; i < boids.length; i++) {
+      const dx = boids[i].x - pred.x, dy = boids[i].y - pred.y;
+      const d2 = dx*dx + dy*dy;
+      if (d2 < nearestD2) { nearestD2 = d2; nearest = boids[i]; }
+    }
+    const nearestD = Math.sqrt(nearestD2);
+
+    // Steering: hunt nearest boid within range, otherwise wander
+    let pfx = 0, pfy = 0;
+    if (nearest && nearestD < PRED_HUNT_R) {
+      const dx = nearest.x - pred.x, dy = nearest.y - pred.y;
+      pfx = (dx / nearestD) * PRED_SPEED * 3;
+      pfy = (dy / nearestD) * PRED_SPEED * 3;
+    } else {
+      pfx = pred.vx * 0.4;
+      pfy = pred.vy * 0.4;
+    }
+
+    // Edge avoidance
+    const EM = 38;
+    if (pred.x < EM)        pfx += (EM - pred.x) * 4;
+    if (pred.x > SZ - EM)   pfx -= (pred.x - (SZ - EM)) * 4;
+    if (pred.y < EM)        pfy += (EM - pred.y) * 4;
+    if (pred.y > SZ - EM)   pfy -= (pred.y - (SZ - EM)) * 4;
+
+    pred.vx += pfx * dt * 5;
+    pred.vy += pfy * dt * 5;
+    [pred.vx, pred.vy] = clamp(pred.vx, pred.vy, PRED_SPEED);
+    [pred.vx, pred.vy] = ensureMin(pred.vx, pred.vy, PRED_SPEED * 0.45);
+    pred.x += pred.vx * dt;
+    pred.y += pred.vy * dt;
+
+    // Eat nearest boid if close enough
+    if (nearest && nearestD < PRED_KILL_R && pred.killTimer <= 0) {
+      const idx = boids.indexOf(nearest);
+      if (idx !== -1) {
+        edgeFlashes.push({ x: nearest.x, y: nearest.y, alpha: 1.0, red: true });
+        boids.splice(idx, 1);
+        flockEl.textContent = String(boids.length);
+        pred.killTimer = PRED_KILL_CD;
+      }
+    }
+  }
+
+  spawnBoids(); spawnZone();
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
+  function clamp(vx, vy, max) {
+    const s = Math.sqrt(vx*vx + vy*vy);
+    return s > max ? [vx/s*max, vy/s*max] : [vx, vy];
+  }
+  function ensureMin(vx, vy, min) {
+    const s = Math.sqrt(vx*vx + vy*vy);
+    if (s === 0) return [min, 0];
+    return s < min ? [vx/s*min, vy/s*min] : [vx, vy];
+  }
+
+  // ── Input ──────────────────────────────────────────────────────────────────
+  canvas.addEventListener('mousemove', e => {
+    const r = canvas.getBoundingClientRect();
+    mx = (e.clientX - r.left) * (SZ / r.width);
+    my = (e.clientY - r.top)  * (SZ / r.height);
+    isInside = true;
+  });
+  canvas.addEventListener('mouseenter', () => isInside = true);
+  canvas.addEventListener('mouseleave', () => isInside = false);
+
+  canvas.addEventListener('pointerdown', e => {
+    if (gameOver) { restart(); return; }
+    const r  = canvas.getBoundingClientRect();
+    const ex = (e.clientX - r.left) * (SZ / r.width);
+    const ey = (e.clientY - r.top)  * (SZ / r.height);
+    boids.forEach(b => {
+      const dx = b.x - ex, dy = b.y - ey;
+      const d  = Math.sqrt(dx*dx + dy*dy) + 1;
+      b.vx += (dx/d) * (10000 / (d*d));
+      b.vy += (dy/d) * (10000 / (d*d));
+      [b.vx, b.vy] = clamp(b.vx, b.vy, MAX_SPEED * 3.5);
+    });
+    waves.push({ x: ex, y: ey, r: 0, born: 0 });
+    flashAlpha = 0.14;
+    playClick();
+  });
+
+  canvas.addEventListener('touchstart', e => {
+    const t = e.touches[0], r = canvas.getBoundingClientRect();
+    mx = (t.clientX - r.left) * (SZ / r.width);
+    my = (t.clientY - r.top)  * (SZ / r.height);
+    isInside = true;
+    if (gameOver) { restart(); return; }
+  }, { passive: true });
+  canvas.addEventListener('touchmove', e => {
+    const t = e.touches[0], r = canvas.getBoundingClientRect();
+    mx = (t.clientX - r.left) * (SZ / r.width);
+    my = (t.clientY - r.top)  * (SZ / r.height);
+  }, { passive: true });
+  canvas.addEventListener('touchend', () => isInside = false);
+
+  // ── Game over handler ──────────────────────────────────────────────────────
+  async function handleGameOver() {
+    gameOverHandled = true;
+    if (score === 0) return;
+    const { city, region } = await fetchGeo();
+    await sbInsert(score, city, region);
+    lastVisitText = formatLastVisit({ score, city, region });
+  }
+
+  // ── Update ─────────────────────────────────────────────────────────────────
+  function update(dt) {
+    if (gameOver) return;
+
+    // Wind
+    windTimer += dt;
+    if (windTimer > WIND_CYCLE) {
+      windTimer = 0;
+      windTargetAngle = Math.random() * Math.PI * 2;
+    }
+    let diff = windTargetAngle - windAngle;
+    while (diff >  Math.PI) diff -= Math.PI * 2;
+    while (diff < -Math.PI) diff += Math.PI * 2;
+    windAngle += diff * dt * 0.25;
+    const windX = Math.cos(windAngle) * WIND_STR;
+    const windY = Math.sin(windAngle) * WIND_STR;
+
+    updatePredator(dt);
+
+    const toRemove = [];
+    boids.forEach(b => {
+      let sfx=0, sfy=0, sn=0;
+      let afx=0, afy=0, an=0;
+      let cfx=0, cfy=0, cn=0;
+
+      boids.forEach(o => {
+        if (o === b) return;
+        const dx = b.x - o.x, dy = b.y - o.y;
+        const d2 = dx*dx + dy*dy;
+        const d  = Math.sqrt(d2);
+        if (d < SEP_R) { sfx += dx / (d2 + 0.01); sfy += dy / (d2 + 0.01); sn++; }
+        if (d < ALI_R) { afx += o.vx; afy += o.vy; an++; }
+        if (d < COH_R) { cfx += o.x;  cfy += o.y;  cn++; }
+      });
+
+      let fx = 0, fy = 0;
+      if (sn > 0) {
+        const [sx, sy] = clamp(sfx, sfy, MAX_SPEED);
+        fx += (sx - b.vx) * SEP_W; fy += (sy - b.vy) * SEP_W;
+      }
+      if (an > 0) {
+        const [ax, ay] = clamp(afx/an, afy/an, MAX_SPEED);
+        const aspd = Math.sqrt(ax*ax + ay*ay);
+        const bspd = Math.sqrt(b.vx*b.vx + b.vy*b.vy);
+        if (aspd > 0 && bspd > 0)
+          b.alignScore = ((ax/aspd)*(b.vx/bspd) + (ay/aspd)*(b.vy/bspd) + 1) / 2;
+        fx += (ax - b.vx) * ALI_W; fy += (ay - b.vy) * ALI_W;
+      }
+      if (cn > 0) {
+        const [cx, cy] = clamp(cfx/cn - b.x, cfy/cn - b.y, MAX_SPEED);
+        fx += cx * COH_W; fy += cy * COH_W;
+      }
+
+      if (isInside) {
+        const dx = b.x - mx, dy = b.y - my;
+        const d  = Math.sqrt(dx*dx + dy*dy) + 0.1;
+        if (d < AVOID_R) {
+          const str = (1 - d/AVOID_R) * AVOID_W;
+          fx += (dx/d) * MAX_SPEED * str;
+          fy += (dy/d) * MAX_SPEED * str;
+        }
+      }
+
+      // Predator flee
+      const pdx = b.x - pred.x, pdy = b.y - pred.y;
+      const pd  = Math.sqrt(pdx*pdx + pdy*pdy) + 0.1;
+      if (pd < PRED_FLEE_R) {
+        const str = (1 - pd / PRED_FLEE_R) * 7.5;
+        fx += (pdx/pd) * MAX_SPEED * str;
+        fy += (pdy/pd) * MAX_SPEED * str;
+      }
+
+      // Wind
+      fx += windX * 0.45;
+      fy += windY * 0.45;
+
+      [fx, fy] = clamp(fx, fy, MAX_FORCE);
+      b.vx += fx * dt; b.vy += fy * dt;
+      [b.vx, b.vy] = clamp(b.vx, b.vy, MAX_SPEED);
+      [b.vx, b.vy] = ensureMin(b.vx, b.vy, MIN_SPEED);
+      b.x += b.vx * dt; b.y += b.vy * dt;
+      b.trail.push({ x: b.x, y: b.y });
+      if (b.trail.length > TRAIL) b.trail.shift();
+
+      if (b.x < 0 || b.x > SZ || b.y < 0 || b.y > SZ) {
+        toRemove.push(b);
+        edgeFlashes.push({ x: Math.max(0, Math.min(SZ, b.x)), y: Math.max(0, Math.min(SZ, b.y)), alpha: 0.7 });
+      }
+    });
+
+    if (toRemove.length > 0) {
+      toRemove.forEach(b => { const i = boids.indexOf(b); if (i !== -1) boids.splice(i, 1); });
+      flockEl.textContent = String(boids.length);
+    }
+
+    for (let i = edgeFlashes.length - 1; i >= 0; i--) {
+      edgeFlashes[i].alpha -= dt * 2.5;
+      if (edgeFlashes[i].alpha <= 0) edgeFlashes.splice(i, 1);
+    }
+
+    if (boids.length < GAMEOVER_MIN) {
+      gameOver = true;
+      hintLabel.textContent = '';
+      if (!gameOverHandled) handleGameOver();
+      return;
+    }
+
+    insideCount = 0;
+    boids.forEach(b => {
+      const dx = b.x - zone.x, dy = b.y - zone.y;
+      if (dx*dx + dy*dy < ZONE_R*ZONE_R) insideCount++;
+    });
+
+    const fillFrac = insideCount / boids.length;
+    if (fillFrac >= FILL_THRESH) {
+      zoneHoldT += dt;
+      if (zoneHoldT >= HOLD_TIME) {
+        score++;
+        scoreEl.textContent = String(score);
+        flashAlpha = 0.45; zoneFlash = 0.9;
+        zonePulseR = ZONE_R; zonePulseA = 0.85;
+        playClick(); spawnZone();
+      }
+    } else {
+      zoneHoldT = Math.max(0, zoneHoldT - dt * 0.5);
+    }
+
+    zoneBreath += dt;
+    zoneFlash  *= 0.88;
+    zonePulseR += 180 * dt;
+    zonePulseA *= 0.82;
+
+    for (let i = waves.length - 1; i >= 0; i--) {
+      waves[i].born += dt;
+      waves[i].r    += 275 * dt;
+      if (waves[i].r > SZ * 1.5) waves.splice(i, 1);
+    }
+    flashAlpha *= 0.84;
+  }
+
+  // ── Draw ───────────────────────────────────────────────────────────────────
+  function draw() {
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = '#101010';
+    ctx.fillRect(0, 0, SZ, SZ);
+
+    if (flashAlpha > 0.004) {
+      ctx.fillStyle = `rgba(255,255,255,${flashAlpha.toFixed(3)})`;
+      ctx.fillRect(0, 0, SZ, SZ);
+    }
+
+    ctx.globalCompositeOperation = 'screen';
+
+    if (!gameOver) {
+      const fillFrac    = boids.length > 0 ? insideCount / boids.length : 0;
+      const holdFrac    = Math.min(1, zoneHoldT / HOLD_TIME);
+      const breathScale = 1 + 0.025 * Math.sin(zoneBreath * 1.6);
+      const zr          = ZONE_R * breathScale;
+
+      ctx.beginPath(); ctx.arc(zone.x, zone.y, zr, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(255,255,255,${(0.12 + fillFrac * 0.28 + zoneFlash * 0.4).toFixed(3)})`;
+      ctx.fill();
+
+      if (holdFrac > 0.02) {
+        ctx.beginPath();
+        ctx.arc(zone.x, zone.y, zr, -Math.PI/2, -Math.PI/2 + holdFrac * Math.PI*2);
+        ctx.strokeStyle = `rgba(255,255,255,${(0.55 * holdFrac).toFixed(3)})`;
+        ctx.lineWidth = 2.5; ctx.stroke();
+      }
+
+      ctx.beginPath(); ctx.arc(zone.x, zone.y, zr, 0, Math.PI*2);
+      ctx.strokeStyle = `rgba(255,255,255,${(0.30 + fillFrac * 0.20 + zoneFlash * 0.35).toFixed(3)})`;
+      ctx.lineWidth = 1.5; ctx.stroke();
+
+      if (zonePulseA > 0.01) {
+        ctx.beginPath(); ctx.arc(zone.x, zone.y, zonePulseR, 0, Math.PI*2);
+        ctx.strokeStyle = `rgba(255,255,255,${zonePulseA.toFixed(3)})`;
+        ctx.lineWidth = 2; ctx.stroke();
+      }
+
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.fillStyle = `rgba(255,255,255,${(0.25 + fillFrac * 0.50).toFixed(2)})`;
+      ctx.font = '10px system-ui'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.letterSpacing = '0.08em';
+      ctx.fillText(String(insideCount), zone.x, zone.y);
+      ctx.letterSpacing = '0';
+      ctx.globalCompositeOperation = 'screen';
+    }
+
+    edgeFlashes.forEach(ef => {
+      const r = ef.red ? 22 : 18;
+      const c0 = ef.red ? `rgba(255,40,10,${ef.alpha.toFixed(3)})` : `rgba(255,160,80,${ef.alpha.toFixed(3)})`;
+      const grd = ctx.createRadialGradient(ef.x, ef.y, 0, ef.x, ef.y, r);
+      grd.addColorStop(0, c0);
+      grd.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.beginPath(); ctx.arc(ef.x, ef.y, r, 0, Math.PI*2);
+      ctx.fillStyle = grd; ctx.fill();
+    });
+
+    if (isInside) {
+      const grd = ctx.createRadialGradient(mx, my, 0, mx, my, AVOID_R);
+      grd.addColorStop(0,   'rgba(255,80,20,0.10)');
+      grd.addColorStop(0.5, 'rgba(255,50,10,0.03)');
+      grd.addColorStop(1,   'rgba(0,0,0,0)');
+      ctx.beginPath(); ctx.arc(mx, my, AVOID_R, 0, Math.PI*2);
+      ctx.fillStyle = grd; ctx.fill();
+    }
+
+    ctx.beginPath();
+    for (let i = 0; i < boids.length; i++) {
+      const a = boids[i];
+      for (let j = i+1; j < boids.length; j++) {
+        const b = boids[j];
+        const dx = b.x - a.x, dy = b.y - a.y;
+        if (dx*dx + dy*dy < CONN_R*CONN_R) { ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); }
+      }
+    }
+    ctx.strokeStyle = 'rgba(255,255,255,0.07)'; ctx.lineWidth = 0.5; ctx.stroke();
+
+    waves.forEach(w => {
+      const a = Math.max(0, 0.42 * (1 - w.born * 1.5));
+      ctx.beginPath(); ctx.arc(w.x, w.y, w.r, 0, Math.PI*2);
+      ctx.strokeStyle = `rgba(255,255,255,${a.toFixed(3)})`; ctx.lineWidth = 1.2; ctx.stroke();
+    });
+
+    boids.forEach(b => {
+      const spd = Math.sqrt(b.vx*b.vx + b.vy*b.vy);
+      const t   = spd / MAX_SPEED;
+      const ang = Math.atan2(b.vy, b.vx);
+      const sz  = 4.0 + t * 2.0;
+      const hue = 28 + b.alignScore * 150;
+      const lit = 38 + t * 44;
+
+      const tlen = b.trail.length;
+      for (let k = 0; k < tlen; k++) {
+        const frac = (k + 1) / tlen;
+        ctx.beginPath();
+        ctx.arc(b.trail[k].x, b.trail[k].y, 0.7 + frac * 1.1, 0, Math.PI*2);
+        ctx.fillStyle = `hsla(${hue.toFixed(0)},82%,${(12 + frac * (lit - 12)).toFixed(0)}%,${(frac * frac * 0.50).toFixed(3)})`;
+        ctx.fill();
+      }
+
+      ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(ang);
+      ctx.beginPath();
+      ctx.moveTo(sz, 0);
+      ctx.lineTo(-sz * 0.62, -sz * 0.36);
+      ctx.lineTo(-sz * 0.38, 0);
+      ctx.lineTo(-sz * 0.62,  sz * 0.36);
+      ctx.closePath();
+      ctx.fillStyle = `hsl(${hue.toFixed(0)},82%,${lit.toFixed(0)}%)`;
+      ctx.fill(); ctx.restore();
+    });
+
+    // Predator glow
+    const pgrd = ctx.createRadialGradient(pred.x, pred.y, 0, pred.x, pred.y, 32);
+    pgrd.addColorStop(0, 'rgba(255,40,8,0.22)');
+    pgrd.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.beginPath(); ctx.arc(pred.x, pred.y, 32, 0, Math.PI*2);
+    ctx.fillStyle = pgrd; ctx.fill();
+
+    // Predator body
+    const pang = Math.atan2(pred.vy, pred.vx);
+    const psz  = 6.5;
+    ctx.save(); ctx.translate(pred.x, pred.y); ctx.rotate(pang);
+    ctx.beginPath();
+    ctx.moveTo(psz, 0);
+    ctx.lineTo(-psz * 0.62, -psz * 0.38);
+    ctx.lineTo(-psz * 0.36, 0);
+    ctx.lineTo(-psz * 0.62,  psz * 0.38);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(255,55,15,0.92)';
+    ctx.fill(); ctx.restore();
+
+    if (isInside) {
+      ctx.beginPath(); ctx.arc(mx, my, 2, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.fill();
+    }
+
+    // Wind indicator — tiny arrow bottom-left corner
+    ctx.globalCompositeOperation = 'source-over';
+    const wx = Math.cos(windAngle) * 13, wy = Math.sin(windAngle) * 13;
+    const ox = 20, oy = SZ - 20;
+    const wa = Math.atan2(wy, wx);
+    ctx.save();
+    ctx.globalAlpha = 0.22;
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(ox + wx, oy + wy); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(ox + wx, oy + wy);
+    ctx.lineTo(ox + wx - Math.cos(wa - 0.45) * 5, oy + wy - Math.sin(wa - 0.45) * 5);
+    ctx.moveTo(ox + wx, oy + wy);
+    ctx.lineTo(ox + wx - Math.cos(wa + 0.45) * 5, oy + wy - Math.sin(wa + 0.45) * 5);
+    ctx.stroke();
+    ctx.restore();
+    ctx.globalCompositeOperation = 'screen';
+
+    if (gameOver) {
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.fillStyle = 'rgba(0,0,0,0.62)';
+      ctx.fillRect(0, 0, SZ, SZ);
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+
+      const hasVisit = lastVisitText.length > 0;
+      const blockH   = hasVisit ? 56 : 30;
+      const topY     = SZ/2 - blockH/2;
+
+      ctx.fillStyle = 'rgba(255,255,255,0.75)';
+      ctx.font = '11px system-ui'; ctx.letterSpacing = '0.18em';
+      ctx.fillText('GAME OVER', SZ/2, topY);
+
+      ctx.fillStyle = 'rgba(255,255,255,0.45)';
+      ctx.font = '10px system-ui'; ctx.letterSpacing = '0.12em';
+      ctx.fillText(`score  ${score}  ·  flock  ${boids.length}`, SZ/2, topY + 26);
+
+      if (hasVisit) {
+        ctx.fillStyle = 'rgba(255,255,255,0.18)';
+        ctx.letterSpacing = '0.06em';
+        ctx.fillText(lastVisitText, SZ/2, topY + 52);
+      }
+
+      ctx.letterSpacing = '0';
+      ctx.globalCompositeOperation = 'screen';
+    }
+  }
+
+  // ── Audio ──────────────────────────────────────────────────────────────────
+  let audioMuted = new URLSearchParams(location.search).has('embed');
+  window.addEventListener('message', e => { if (e.data?.type === 'setMuted') audioMuted = !!e.data.muted; });
+  let clickAudio = null;
+  function initAudio() {
+    if (clickAudio) return;
+    clickAudio = new Audio('./sounds/selection.mp3');
+    clickAudio.volume = 0.42;
+  }
+  function playClick() { if (audioMuted) return; initAudio(); clickAudio.currentTime = 0; clickAudio.play().catch(()=>{}); }
+
+  // ── Loop ───────────────────────────────────────────────────────────────────
+  let lastT = performance.now();
+  function loop(now) {
+    const dt = Math.min((now - lastT) / 1000, 0.05);
+    lastT = now;
+    update(dt);
+    draw();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+</script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>vector</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300&display=swap" rel="stylesheet">
+  <style>
+    :root { --sz: 422px; }
+    @media (min-width: 1440px) { :root { --sz: 576px; } }
+    @media (max-width: 480px)  { :root { --sz: 322px; } }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: #101010;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    #wrap {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      }
+
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(16, 1fr);
+      grid-template-rows: repeat(16, 1fr);
+      width: 100vmin;
+      height: 100vmin;
+      padding: 0;
+      gap: 1px;
+      background: #101010;
+      touch-action: pan-x;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #grid::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(
+        circle 120px at var(--mx, 50%) var(--my, 50%),
+        rgba(255,255,255,0.035) 0%,
+        transparent 100%
+      );
+      opacity: var(--glow, 0);
+      transition: opacity 0.4s;
+      border-radius: inherit;
+    }
+
+    .cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .filing {
+      position: relative;
+      width: 72%;
+      height: 1.5px;
+      background: linear-gradient(to right, transparent 0%, rgba(255,255,255,0.55) 45%, rgba(255,255,255,0.95) 100%);
+      border-radius: 0 1px 1px 0;
+      transform-origin: 50% 50%;
+      will-change: transform, opacity;
+    }
+    .filing::after {
+      content: '';
+      position: absolute;
+      right: -1.5px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.9);
+    }
+  </style>
+</head>
+<body>
+  <div id="wrap">
+    <div id="grid"></div>
+  </div>
+
+  <script>
+    const SIZE = 16;
+    const LERP = 0.16;
+
+    const grid = document.getElementById('grid');
+
+    const filings = [];
+    for (let i = 0; i < SIZE * SIZE; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      const f = document.createElement('div');
+      f.className = 'filing';
+      cell.appendChild(f);
+      grid.appendChild(cell);
+      filings.push(f);
+    }
+
+    const centers   = filings.map(() => ({ x: 0, y: 0 }));
+    const curAngles = new Float32Array(SIZE * SIZE);
+    const tgtAngles = new Float32Array(SIZE * SIZE);
+    const burstVel  = new Float32Array(SIZE * SIZE);
+
+    let mx = -9999, my = -9999;
+    let isInside = false;
+
+    function updateCenters() {
+      filings.forEach((f, i) => {
+        const r = f.getBoundingClientRect();
+        centers[i].x = r.left + r.width  / 2;
+        centers[i].y = r.top  + r.height / 2;
+      });
+    }
+
+    updateCenters();
+    window.addEventListener('resize', updateCenters);
+
+    // Cursor dot
+    const cursorEl = document.createElement('div');
+    Object.assign(cursorEl.style, {
+      position: 'absolute', width: '5px', height: '5px', borderRadius: '50%',
+      background: 'rgba(255,255,255,0.7)', pointerEvents: 'none',
+      transform: 'translate(-50%,-50%)', opacity: '0', transition: 'opacity 0.18s',
+    });
+    grid.appendChild(cursorEl);
+
+    // Position the visible cursor dot + radial glow from a client coordinate
+    // (shared by mouse + touch so the dot follows on mobile too).
+    function moveCursorVisual(clientX, clientY) {
+      mx = clientX; my = clientY;
+      const r = grid.getBoundingClientRect();
+      grid.style.setProperty('--mx', ((mx - r.left) / r.width  * 100) + '%');
+      grid.style.setProperty('--my', ((my - r.top)  / r.height * 100) + '%');
+      cursorEl.style.left = (mx - r.left) + 'px';
+      cursorEl.style.top  = (my - r.top)  + 'px';
+    }
+
+    // ── Audio ─────────────────────────────────────────────────
+    let audioMuted = new URLSearchParams(location.search).has('embed');
+    window.addEventListener('message', e => { if (e.data?.type === 'setMuted') audioMuted = !!e.data.muted; });
+    let hoverAudio = null, clickAudio = null;
+    function initAudio() {
+      if (hoverAudio) return;
+      hoverAudio = new Audio('./sounds/hover-vector.wav');
+      hoverAudio.volume = 0.35;
+      clickAudio = new Audio('./sounds/selection.mp3');
+      clickAudio.volume = 0.42;
+    }
+    function synthTick() {
+      if (audioMuted) return;
+      initAudio();
+      hoverAudio.currentTime = 0;
+      hoverAudio.play().catch(() => {});
+    }
+    function synthClick() {
+      if (audioMuted) return;
+      initAudio();
+      clickAudio.currentTime = 0;
+      clickAudio.play().catch(() => {});
+    }
+
+    let lastTickX = 0, lastTickY = 0, lastTickMs = 0;
+    function maybeTick(x, y) {
+      if (!isInside) return;
+      const dx = x - lastTickX, dy = y - lastTickY;
+      const now = performance.now();
+      if (dx * dx + dy * dy >= 48 * 48 && now - lastTickMs > 220) {
+        synthTick();
+        lastTickX = x; lastTickY = y; lastTickMs = now;
+      }
+    }
+
+    window.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      maybeTick(mx, my);
+      if (isInside) {
+        const r = grid.getBoundingClientRect();
+        grid.style.setProperty('--mx', ((mx - r.left) / r.width  * 100) + '%');
+        grid.style.setProperty('--my', ((my - r.top)  / r.height * 100) + '%');
+        cursorEl.style.left = (mx - r.left) + 'px';
+        cursorEl.style.top  = (my - r.top)  + 'px';
+      }
+    });
+
+    grid.addEventListener('mouseenter', () => {
+      isInside = true;
+      grid.style.setProperty('--glow', '1');
+      synthTick();
+      cursorEl.style.opacity = '1';
+    });
+
+    grid.addEventListener('mouseleave', () => {
+      isInside = false;
+      grid.style.setProperty('--glow', '0');
+      cursorEl.style.opacity = '0';
+    });
+
+    grid.addEventListener('pointerdown', e => {
+      synthClick();
+      const cx = e.clientX, cy = e.clientY;
+      filings.forEach((_, i) => {
+        const c = centers[i];
+        const dx = c.x - cx, dy = c.y - cy;
+        const dist = Math.sqrt(dx * dx + dy * dy) + 1;
+        setTimeout(() => {
+          burstVel[i] += Math.max(0, 1 - dist / 260) * 22 * (Math.random() > 0.5 ? 1 : -1);
+        }, (dist / 420) * 1000);
+      });
+    });
+
+    grid.addEventListener('touchstart', e => {
+      const t = e.touches[0];
+      isInside = true;
+      grid.style.setProperty('--glow', '1');
+      cursorEl.style.opacity = '1';
+      moveCursorVisual(t.clientX, t.clientY);
+    }, { passive: true });
+
+    grid.addEventListener('touchmove', e => {
+      const t = e.touches[0];
+      moveCursorVisual(t.clientX, t.clientY);
+      maybeTick(mx, my);
+    }, { passive: true });
+
+    grid.addEventListener('touchend', () => {
+      isInside = false;
+      grid.style.setProperty('--glow', '0');
+      cursorEl.style.opacity = '0';
+    });
+
+    function lerpAngle(a, b, t) {
+      let d = b - a;
+      while (d >  180) d -= 360;
+      while (d < -180) d += 360;
+      return a + d * t;
+    }
+
+    function tick() {
+      for (let i = 0; i < filings.length; i++) {
+        const c = centers[i];
+        tgtAngles[i] = Math.atan2(my - c.y, mx - c.x) * 180 / Math.PI;
+
+        if (Math.abs(burstVel[i]) > 0.05) {
+          curAngles[i] += burstVel[i];
+          burstVel[i] *= 0.87;
+        } else {
+          burstVel[i] = 0;
+          curAngles[i] = lerpAngle(curAngles[i], tgtAngles[i], LERP);
+        }
+
+        let scaleX = 1, opacity = 0.18;
+        if (isInside) {
+          const dx = mx - c.x, dy = my - c.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const prox = Math.max(0, 1 - dist / 115);
+          scaleX  = 1 + prox * 1.5;
+          opacity = 0.18 + prox * 0.74;
+        }
+        const burstFactor = Math.min(Math.abs(burstVel[i]) * 0.1, 0.55);
+        opacity = Math.max(opacity, 0.18 + burstFactor);
+
+        filings[i].style.transform = `rotate(${curAngles[i]}deg) scaleX(${scaleX.toFixed(3)})`;
+        filings[i].style.opacity = opacity.toFixed(3);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    tick();
+  </script>
+</body>
+</html>
