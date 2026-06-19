@@ -571,29 +571,48 @@ footer .container-fluid {
   font-family: Geist, sans-serif;
 }
 
-/* CLOSE BUTTON */
+/* CLOSE BUTTON — glass */
 .custom-close {
   position: absolute;
   top: 32px;
   right: 48px;
-  border: 1px solid #404040;
-  border-radius: 4px;
-  background: rgba(16, 16, 16, 0.5);
   z-index: 10;
-  transition: 0.3s;
   display: flex;
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   padding: 4px;
   justify-content: center;
   align-items: center;
-  gap: 4px;
   cursor: pointer;
-
+  /* glass: dark (modals are always #0A0A0A) */
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35), inset 0 0.5px 0 rgba(255, 255, 255, 0.10);
+  color: rgba(255, 255, 255, 0.60);
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .custom-close:hover {
-  border-color: #888;
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: rgba(255, 255, 255, 0.90);
+}
+
+/* glass: light mode */
+[data-theme="light"] .custom-close {
+  background: rgba(255, 255, 255, 0.68);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), inset 0 0.5px 0 rgba(255, 255, 255, 0.95);
+  color: rgba(0, 0, 0, 0.50);
+}
+
+[data-theme="light"] .custom-close:hover {
+  background: rgba(255, 255, 255, 0.88);
+  border-color: rgba(0, 0, 0, 0.14);
+  color: rgba(0, 0, 0, 0.80);
 }
 
 /* NAV BUTTONS */
@@ -1109,8 +1128,6 @@ footer .container-fluid {
 
 .custom-close.cs-fs-close {
   position: static;
-  border-radius: 4px;
-  background: rgba(16, 16, 16, 0.5);
 }
 
 .cs-fs-brand {

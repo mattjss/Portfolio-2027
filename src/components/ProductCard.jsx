@@ -284,7 +284,7 @@ function CaseStudyModal({ item, onClose }) {
         <span className="cs-fs-crumb">{item.category}</span>
         <button className="custom-close cs-fs-close" onClick={onClose} aria-label="Close">
           <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <path d="M2.95746 9.75L5.99999 6.70705L9.04299 9.75L9.74999 9.04295L6.70704 6L9.75049 2.95696L9.04354 2.25L5.99999 5.29295L2.95704 2.25L2.25 2.95703L5.29299 6L2.25049 9.04305L2.95746 9.75Z" fill="#AAAAAA" />
+            <path d="M2.95746 9.75L5.99999 6.70705L9.04299 9.75L9.74999 9.04295L6.70704 6L9.75049 2.95696L9.04354 2.25L5.99999 5.29295L2.95704 2.25L2.25 2.95703L5.29299 6L2.25049 9.04305L2.95746 9.75Z" fill="currentColor" />
           </svg>
         </button>
       </div>
@@ -401,7 +401,7 @@ function RegularModal({ item, onClose, soundEnabled, setSoundEnabled }) {
         <span className="archive-footer-tag">{item.category}</span>
         <button className="custom-close pgm-close" onClick={onClose} aria-label="Close">
           <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <path d="M2.95746 9.75L5.99999 6.70705L9.04299 9.75L9.74999 9.04295L6.70704 6L9.75049 2.95696L9.04354 2.25L5.99999 5.29295L2.95704 2.25L2.25 2.95703L5.29299 6L2.25049 9.04305L2.95746 9.75Z" fill="#AAAAAA" />
+            <path d="M2.95746 9.75L5.99999 6.70705L9.04299 9.75L9.74999 9.04295L6.70704 6L9.75049 2.95696L9.04354 2.25L5.99999 5.29295L2.95704 2.25L2.25 2.95703L5.29299 6L2.25049 9.04305L2.95746 9.75Z" fill="currentColor" />
           </svg>
         </button>
       </div>
