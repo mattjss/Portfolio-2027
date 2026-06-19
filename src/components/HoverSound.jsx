@@ -16,6 +16,7 @@ const HOVER_SOUND = [
   ".archives-hero-card",      // archives hero icons
   ".pg-card",                 // ← playground + archives embed cards
   ".preview-panel button",    // preview arrows / close
+  ".cs-fs-tab",               // case study full-screen tab bar
 ];
 
 const CLICK_SOUND = [

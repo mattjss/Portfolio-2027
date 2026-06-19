@@ -1166,8 +1166,8 @@ footer .container-fluid {
   pointer-events: none;
   z-index: 0;
   transition:
-    transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1),
-    width    360ms cubic-bezier(0.16, 1, 0.3, 1);
+    transform 400ms cubic-bezier(0.34, 1.06, 0.64, 1),
+    width    340ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* TOP BAR — breadcrumb + close */
