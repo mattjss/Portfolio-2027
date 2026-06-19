@@ -152,7 +152,7 @@ export default function MeshCanvas({
     function playClick() {
       if (!clickAudio) {
         clickAudio = new Audio(soundSrc);
-        clickAudio.volume = 0.42;
+        clickAudio.volume = 0.18;
       }
       clickAudio.currentTime = 0;
       clickAudio.play().catch(() => {});

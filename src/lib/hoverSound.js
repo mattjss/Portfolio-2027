@@ -54,5 +54,5 @@ function play(name, volume) {
   src.start(0);
 }
 
-export const playHover = (v = 0.3) => play("hover", v);
-export const playClick = (v = 0.4) => play("click", v);
+export const playHover = (v = 0.13) => play("hover", v);
+export const playClick = (v = 0.18) => play("click", v);
