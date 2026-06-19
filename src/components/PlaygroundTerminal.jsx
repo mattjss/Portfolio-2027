@@ -1,4 +1,17 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+
+const SoundOnIcon = () => (
+  <svg viewBox="0 0 16 16">
+    <path d="M7 2L3.5 6H1v4h2.5L7 14V2z" fill="currentColor" />
+    <path d="M10 5.5a4 4 0 0 1 0 5M12.5 3a7 7 0 0 1 0 10" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" fill="none" />
+  </svg>
+);
+const SoundOffIcon = () => (
+  <svg viewBox="0 0 16 16">
+    <path d="M7 2L3.5 6H1v4h2.5L7 14V2z" fill="currentColor" />
+    <path d="M11 6l4 4M15 6l-4 4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" fill="none" />
+  </svg>
+);
 
 // Native terminal hero for the Playground — same structure/classes/engine as the
 // About terminal (reuses the .about-terminal* CSS), only the scenes differ.
@@ -8,6 +21,8 @@ export default function PlaygroundTerminal() {
   const nextRef = useRef(null);
   const sceneRef = useRef(null);
   const heroRef = useRef(null);
+  const [heroMuted, setHeroMuted] = useState(false);
+  const mutedRef = useRef(false);
 
   useEffect(() => {
     const out = outRef.current;
@@ -44,7 +59,7 @@ export default function PlaygroundTerminal() {
     }
 
     function keyClick() {
-      if (!terminalAudible) return;
+      if (!terminalAudible || mutedRef.current) return;
       try {
         const c = ac(), t = c.currentTime;
         const noise = mkNoise(c, 0.005);
@@ -65,7 +80,7 @@ export default function PlaygroundTerminal() {
     }
 
     function enterClick() {
-      if (!terminalAudible) return;
+      if (!terminalAudible || mutedRef.current) return;
       try {
         const c = ac(), t = c.currentTime;
         const noise = mkNoise(c, 0.008);
@@ -86,7 +101,7 @@ export default function PlaygroundTerminal() {
     }
 
     function blip() {
-      if (!terminalAudible) return;
+      if (!terminalAudible || mutedRef.current) return;
       try {
         const c = ac(), t = c.currentTime;
         const noise = mkNoise(c, 0.004);
@@ -99,7 +114,7 @@ export default function PlaygroundTerminal() {
     }
 
     function successChime() {
-      if (!terminalAudible) return;
+      if (!terminalAudible || mutedRef.current) return;
       try {
         const c = ac();
         [[880, 0, 0.12, 0.15], [1108, 0.18, 0.10, 0.18]].forEach(([hz, delay, vol, decay]) => {
@@ -444,7 +459,16 @@ export default function PlaygroundTerminal() {
                 </svg>
               </button>
             </div>
-            <span className="about-terminal-meta" ref={sceneRef}></span>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span className="about-terminal-meta" ref={sceneRef}></span>
+              <button
+                className="pg-ctrl-btn"
+                aria-label="Toggle sound"
+                onClick={() => { const next = !heroMuted; setHeroMuted(next); mutedRef.current = next; }}
+              >
+                {heroMuted ? <SoundOffIcon /> : <SoundOnIcon />}
+              </button>
+            </div>
           </div>
         </div>
       </div>

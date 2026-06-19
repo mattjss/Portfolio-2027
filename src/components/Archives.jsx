@@ -81,6 +81,8 @@ function Archives() {
   const nextRef = useRef(null);
   const sceneRef = useRef(null);
   const heroRef = useRef(null);
+  const [heroMuted, setHeroMuted] = useState(false);
+  const mutedRef = useRef(false);
 
   useEffect(() => {
     const out = outRef.current;
@@ -116,7 +118,7 @@ function Archives() {
     }
 
     function keyClick() {
-      if (!terminalAudible) return;
+      if (!terminalAudible || mutedRef.current) return;
       try {
         const c = ac(), t = c.currentTime;
         const noise = mkNoise(c, 0.005);
@@ -137,7 +139,7 @@ function Archives() {
     }
 
     function enterClick() {
-      if (!terminalAudible) return;
+      if (!terminalAudible || mutedRef.current) return;
       try {
         const c = ac(), t = c.currentTime;
         const noise = mkNoise(c, 0.008);
@@ -158,7 +160,7 @@ function Archives() {
     }
 
     function blip() {
-      if (!terminalAudible) return;
+      if (!terminalAudible || mutedRef.current) return;
       try {
         const c = ac(), t = c.currentTime;
         const noise = mkNoise(c, 0.004);
@@ -453,7 +455,16 @@ function Archives() {
                   </svg>
                 </button>
               </div>
-              <span className="about-terminal-meta" ref={sceneRef}></span>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span className="about-terminal-meta" ref={sceneRef}></span>
+                <button
+                  className="pg-ctrl-btn"
+                  aria-label="Toggle sound"
+                  onClick={() => { const next = !heroMuted; setHeroMuted(next); mutedRef.current = next; }}
+                >
+                  {heroMuted ? <SoundOffIcon /> : <SoundOnIcon />}
+                </button>
+              </div>
             </div>
           </div>
         </div>
