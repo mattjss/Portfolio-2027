@@ -73,7 +73,7 @@ const PLAYGROUND_ITEMS = [
     Component: SyncEmbed,
     sound: true,
     open: { href: "https://mattjss.github.io/Sync/", label: "Open Sync" },
-    brand: "Sync",
+    brand: "State Machine",
     project: "Sync",
     brandIcon: "/icons/state-machine.svg",
     summary: "Interaction design for an AI calendar sync interface. Exploration for communicating background AI activity clearly.",
