@@ -99,18 +99,8 @@ export const FEATURED_WORKS = [
                 },
                 {
                     type: "image",
-                    src: "/images/cs-overview-2.png",
-                    caption: "Geometric Shapes",
-                },
-                {
-                    type: "image",
                     src: "/images/cs-overview-3.png",
                     caption: "High Contrast",
-                },
-                {
-                    type: "image",
-                    src: "/images/cs-overview-4.png",
-                    caption: "Icon Library",
                 },
                 {
                     type: "image",
