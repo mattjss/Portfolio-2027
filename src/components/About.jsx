@@ -282,6 +282,8 @@ function About() {
       blip(); await waitG(200, gen);
       addLine('<span class="mk">—</span> <span class="v">San Diego FC</span>             <span class="d">MLS</span>');
       blip(); await waitG(200, gen);
+      addLine('<span class="mk">—</span> <span class="v">Liverpool</span>               <span class="d">EPL</span>');
+      blip(); await waitG(200, gen);
       addLine('<span class="mk">—</span> <span class="v">Univ. of Maine Hockey</span>    <span class="d">Hockey East</span>');
       blip(); await waitG(200, gen);
       addLine('<span class="mk">—</span> <span class="v">Boston University</span>        <span class="d">Hockey East</span>');
