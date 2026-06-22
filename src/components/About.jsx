@@ -192,8 +192,6 @@ function About() {
       blip(); await waitG(180, gen);
       addLine('<span class="mk">—</span> <span class="v">Rowan</span>');
       blip(); await waitG(200, gen);
-      addLine('<span class="mk">—</span> <span class="v">State Machine</span>');
-      blip(); await waitG(200, gen);
       addLine('<span class="mk">—</span> <span class="v">MakersPlace</span>');
       blip(); await waitG(200, gen);
       addLine('<span class="mk">—</span> <span class="v">Olympus Finance</span>');
