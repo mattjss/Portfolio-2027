@@ -208,11 +208,12 @@ export default function MatrixLoaderEmbed({ muted = true }) {
       <div
         style={{
           fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-          fontSize: 12,
+          fontSize: isMobile ? 10 : 12,
           color: fg,
-          whiteSpace: "pre",
+          whiteSpace: "pre-wrap",
+          wordBreak: "break-word",
           display: "flex",
-          alignItems: "center",
+          alignItems: "flex-start",
           gap: 8,
         }}
       >
