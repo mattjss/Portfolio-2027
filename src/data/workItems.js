@@ -16,7 +16,7 @@ export const WORK_ITEMS = [
       ],
       team: [
         { type: "text", label: "Leadership", content: "Landon Langford, Andre Camara, Michael Skinner, Claus Enevoldsen" },
-        { type: "text", label: "Sr. Product Designer", content: "Greg Harder" },
+        { type: "text", label: "Sr. Product Manager", content: "Greg Harder" },
         { type: "text", label: "Lead Product Designer", content: "Matt Silverman" },
         { type: "text", label: "Lead Front-End Engineer", content: "Nikita Matusevich" },
         { type: "text", label: "Lead Back-End Engineer", content: "Chong Yao" },
@@ -137,7 +137,7 @@ export const WORK_ITEMS = [
       ],
       team: [
         { type: "text", label: "Leadership", content: "Bruno Orsini, Andre Camara, Michael Skinner, Claus Enevoldsen" },
-        { type: "text", label: "Sr. Product Designer", content: "Greg Harder" },
+        { type: "text", label: "Sr. Product Manager", content: "Greg Harder" },
         { type: "text", label: "Lead Product Designer", content: "Matt Silverman" },
         { type: "text", label: "Lead Front-End Engineer", content: "Nikita Matusevich" },
         { type: "text", label: "Lead Back-End Engineer", content: "Chong Yao" },

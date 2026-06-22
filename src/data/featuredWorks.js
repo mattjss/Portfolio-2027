@@ -41,7 +41,7 @@ export const FEATURED_WORKS = [
                     content:
                         "Landon Langford, Andre Camara, Michael Skinner, Claus Enevoldsen",
                 },
-                { type: "text", label: "Sr. Product Designer", content: "Greg Harder" },
+                { type: "text", label: "Sr. Product Manager", content: "Greg Harder" },
                 {
                     type: "text",
                     label: "Lead Product Designer",
@@ -333,7 +333,7 @@ export const FEATURED_WORKS = [
                     content:
                         "Bruno Orsini, Andre Camara, Michael Skinner, Claus Enevoldsen",
                 },
-                { type: "text", label: "Sr. Product Designer", content: "Greg Harder" },
+                { type: "text", label: "Sr. Product Manager", content: "Greg Harder" },
                 {
                     type: "text",
                     label: "Lead Product Designer",
