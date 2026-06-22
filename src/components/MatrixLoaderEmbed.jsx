@@ -200,7 +200,8 @@ export default function MatrixLoaderEmbed({ muted = true }) {
         display: "flex",
         alignItems: "center",
         justifyContent: "flex-start",
-        padding: isMobile ? "0 8px 8px 8px" : "0 16px 16px 44px",
+        paddingLeft: isMobile ? 8 : 12,
+        paddingRight: isMobile ? 8 : 12,
         overflow: "hidden",
         boxSizing: "border-box",
       }}
