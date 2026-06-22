@@ -210,10 +210,10 @@ export default function MatrixLoaderEmbed({ muted = true }) {
           fontFamily: "'JetBrains Mono', ui-monospace, monospace",
           fontSize: isMobile ? 10 : 12,
           color: fg,
-          whiteSpace: "pre-wrap",
-          wordBreak: "break-word",
+          whiteSpace: isMobile ? "pre-wrap" : "pre",
+          wordBreak: isMobile ? "break-word" : "normal",
           display: "flex",
-          alignItems: "flex-start",
+          alignItems: isMobile ? "flex-start" : "center",
           gap: 8,
         }}
       >
