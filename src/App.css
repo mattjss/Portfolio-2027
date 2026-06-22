@@ -1495,7 +1495,8 @@ h1 span {
   font-size: 10px;
   line-height: 2;
   width: 300px;
-  margin: 0 auto;
+  margin-left: auto;
+  margin-right: 41px;
   color: #605850;
   /* light */
   transition: color 0.35s;
