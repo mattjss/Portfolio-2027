@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>terminal</title>
+<title>terminal archive</title>
 <style>
   :root { --sz: 422px; }
   @media (min-width: 1440px) { :root { --sz: 576px; } }
@@ -67,6 +67,7 @@
   .d  { color: #3e4451; }
   .g  { color: #56b6c2; }
   .mk { color: #f97316; }
+  .wh { color: #abb2bf; }
 
   body.light .p  { color: #a09080; }
   body.light .v  { color: #1a5a9e; }
@@ -74,6 +75,7 @@
   body.light .d  { color: #a09080; }
   body.light .g  { color: #1e7a58; }
   body.light .mk { color: #c24d08; }
+  body.light .wh { color: #383838; }
 
   .cursor {
     display: inline-block;
@@ -91,7 +93,6 @@
     50%, 100% { opacity: 0; }
   }
 
-  /* Bottom controls */
   #bottom {
     display: flex; flex-direction: column; align-items: center;
     padding-bottom: 18px; gap: 7px;
@@ -119,8 +120,8 @@
   body.light .paddle:active  { color: rgba(0,0,0,0.72); }
 
   .toggle {
-    position: relative; display: inline-block;
-    width: 26px; height: 14px; cursor: pointer;
+    position: fixed; bottom: 24px; right: 24px;
+    display: inline-block; width: 26px; height: 14px; cursor: pointer;
   }
   .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
   .knob {
@@ -167,7 +168,6 @@
             <polyline points="6.5,1.5 2.5,7 6.5,12.5"/>
           </svg>
         </button>
-        <label class="toggle" id="toggle-label"><input type="checkbox" id="mode-switch"><span class="knob"></span></label>
         <button class="paddle" id="btn-next">
           <svg width="9" height="14" viewBox="0 0 9 14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="2.5,1.5 6.5,7 2.5,12.5"/>
@@ -177,16 +177,15 @@
     </div>
   </div>
 </div>
+<label class="toggle"><input type="checkbox" id="mode-switch"><span class="knob"></span></label>
 
 <script>
 (() => {
   const out  = document.getElementById('output');
   let   actx = null;
-  let   audioMuted = true;
 
   const ac = () => {
     if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
-    if (actx.state === 'suspended') actx.resume();
     return actx;
   };
 
@@ -199,7 +198,6 @@
   }
 
   function keyClick() {
-    if (audioMuted) return;
     try {
       const c = ac(), t = c.currentTime;
       const noise = mkNoise(c, 0.005);
@@ -218,7 +216,6 @@
   }
 
   function enterClick() {
-    if (audioMuted) return;
     try {
       const c = ac(), t = c.currentTime;
       const noise = mkNoise(c, 0.008);
@@ -237,7 +234,6 @@
   }
 
   function blip() {
-    if (audioMuted) return;
     try {
       const c = ac(), t = c.currentTime;
       const noise = mkNoise(c, 0.004);
@@ -248,24 +244,7 @@
     } catch (_) {}
   }
 
-  function successChime() {
-    if (audioMuted) return;
-    try {
-      const c = ac();
-      [[880, 0, 0.12, 0.15], [1108, 0.18, 0.10, 0.18]].forEach(([hz, delay, vol, decay]) => {
-        const osc = c.createOscillator(), g = c.createGain();
-        osc.type = 'sine'; osc.frequency.value = hz;
-        osc.connect(g); g.connect(c.destination);
-        const t = c.currentTime + delay;
-        g.gain.setValueAtTime(vol, t);
-        g.gain.exponentialRampToValueAtTime(0.0001, t + decay);
-        osc.start(t); osc.stop(t + decay + 0.01);
-      });
-    } catch (_) {}
-  }
-
-  const wait = ms => new Promise(r => setTimeout(r, ms));
-
+  const wait  = ms => new Promise(r => setTimeout(r, ms));
   function waitG(ms, gen) {
     return new Promise((res, rej) => setTimeout(() => runGen === gen ? res() : rej(0), ms));
   }
@@ -292,7 +271,7 @@
       if (runGen !== gen) throw 0;
       cmdEl.textContent += ch;
       keyClick();
-      await wait(46 + Math.random() * 62);
+      await wait(44 + Math.random() * 58);
     }
   }
 
@@ -311,218 +290,211 @@
         span.innerHTML = `<span class="v">${SPIN[si]}</span>  <span class="d">${messages[mi]}</span>`;
       }, 100);
       setTimeout(() => {
-        clearInterval(iv);
-        line.remove();
+        clearInterval(iv); line.remove();
         runGen === gen ? res() : rej(0);
       }, ms);
     });
   }
 
-  function spinFor(label, ms, gen) {
-    const line = addLine('');
-    const span = document.createElement('span'); line.appendChild(span);
-    let si = 0;
-    span.innerHTML = `<span class="v">${SPIN[si]}</span> ${label}`;
-    return new Promise((res, rej) => {
-      const iv = setInterval(() => {
-        if (runGen !== gen) { clearInterval(iv); rej(0); return; }
-        si = (si + 1) % SPIN.length;
-        span.innerHTML = `<span class="v">${SPIN[si]}</span> ${label}`;
-      }, 100);
-      setTimeout(() => {
-        clearInterval(iv);
-        runGen === gen ? res(line) : rej(0);
-      }, ms);
-    });
-  }
+  // ── Scenes ────────────────────────────────────────────────────────────
 
-  // ── Scenes ────────────────────────────────────────────────────────
-
-  async function sceneDinner(gen) {
+  async function sceneRowan(gen) {
     const { cmd, cur } = mkPrompt('matt');
     await waitG(700, gen);
-    await type(cmd, 'reserve dinner tonight', gen);
+    await type(cmd, 'cat rowan.md', gen);
     enterClick(); await waitG(140, gen); cur.remove();
 
-    await thinkFor([
-      'red meat: 0 of 1 this week',
-      'you hit the gym today',
-      'protein\'s the priority',
-    ], 3800, gen);
+    await thinkFor(['reading file', 'parsing entry'], 1800, gen);
 
-    addLine('<span class="v">House of Prime Rib</span>  <span class="d">0.8mi · Van Ness</span>');
-    blip(); await waitG(250, gen);
-    addLine('<span class="mk">—</span> <span class="m">why</span>      <span class="v">no red meat this week</span>  <span class="d">(0 / 1)</span>');
-    blip(); await waitG(190, gen);
-    addLine('<span class="mk">—</span> <span class="m">table</span>    <span class="v">window · 8:00pm · 2 seats</span>');
-    blip(); await waitG(190, gen);
-    addLine('<span class="mk">—</span> <span class="m">budget</span>   <span class="v">~$110pp</span>  <span class="d">within range</span>');
-    blip(); await waitG(340, gen);
-
-    const l1 = await spinFor('reserving', 2200, gen);
-    l1.innerHTML = '<span class="g">confirmed</span>  8:00pm · table for 2  <span class="d">2.1s</span>';
-    successChime(); await waitG(200, gen);
-    addLine('view reservation  <span class="d">#R-4829 · Prime Rib</span>');
-    blip(); await waitG(500, gen);
-
-    await thinkFor(['timing ride around your 8pm'], 2200, gen);
-
-    const l2 = await spinFor('scheduling ride', 1000, gen);
-    l2.innerHTML = '<span class="g">ride confirmed</span>  <span class="d">1.4s</span>';
-    successChime(); await waitG(200, gen);
-    addLine('<span class="v">Cybercab</span>  <span class="d">departs 7:40pm · arrives 8:02pm</span>');
-    blip(); await waitG(190, gen);
-    addLine('view ride  <span class="d">#C-2291 · Tesla</span>');
-    blip();
-  }
-
-  async function sceneFun(gen) {
-    const { cmd, cur } = mkPrompt('matt');
-    await waitG(700, gen);
-    await type(cmd, 'play golf', gen);
-    enterClick(); await waitG(140, gen); cur.remove();
-
-    await thinkFor(['checking your week', 'tallying your stats'], 2600, gen);
-
-    addLine('<span class="mk">—</span> <span class="m">run</span>     <span class="v">52mi</span>  <span class="d">goal 40mi</span>  <span class="g">✓</span>');
-    blip(); await waitG(220, gen);
-    addLine('<span class="mk">—</span> <span class="m">code</span>    <span class="v">4,820 lines</span>  <span class="g">✓</span>');
-    blip(); await waitG(220, gen);
-    addLine('<span class="mk">—</span> <span class="m">meals</span>   <span class="v">clean</span>  <span class="d">6 of 7 days</span>  <span class="g">✓</span>');
-    blip(); await waitG(360, gen);
-
-    addLine('<span class="mk">top tier unlocked</span>  <span class="d">2 courses available</span>');
-    blip(); await waitG(380, gen);
-
-    addLine('<span class="m">The Olympic Club</span>    <span class="d">7mi</span>');
-    blip(); await waitG(200, gen);
-    addLine('<span class="v">Pebble Beach</span>        <span class="d">32mi</span>  <span class="mk">← best match</span>');
-    blip(); await waitG(440, gen);
-
-    const l1 = await spinFor('booking', 2400, gen);
-    l1.innerHTML = '<span class="g">confirmed</span>  Pebble Beach · Sat 8:30am  <span class="d">1.8s</span>';
-    successChime(); await waitG(200, gen);
-    addLine('view booking  <span class="d">#G-2291 · Pebble Beach</span>');
-    blip(); await waitG(500, gen);
-
-    const l2 = await spinFor('scheduling ride', 1800, gen);
-    l2.innerHTML = '<span class="g">ride confirmed</span>  <span class="d">1.2s</span>';
-    successChime(); await waitG(200, gen);
-    addLine('<span class="v">Cybercab</span>  <span class="d">departs 7:45am · arrives 8:15am</span>');
-    blip(); await waitG(190, gen);
-    addLine('view ride  <span class="d">#C-8847 · Tesla</span>');
-    blip();
-  }
-
-  async function sceneMorning(gen) {
-    const { cmd, cur } = mkPrompt('matt');
-    await waitG(700, gen);
-    await type(cmd, 'morning brief', gen);
-    enterClick(); await waitG(140, gen); cur.remove();
-
-    await thinkFor([
-      'syncing health data',
-      'pulling your schedule',
-      'checking weather',
-    ], 3200, gen);
-
-    addLine('<span class="mk">—</span> <span class="m">sleep</span>    <span class="v">6h 42m</span>  <span class="d">deep 1h 12m</span>  <span class="g">✓</span>');
-    blip(); await waitG(220, gen);
-    addLine('<span class="mk">—</span> <span class="m">hrv</span>      <span class="v">68ms</span>  <span class="d">+4 from yesterday</span>  <span class="g">✓</span>');
-    blip(); await waitG(220, gen);
-    addLine('<span class="mk">—</span> <span class="m">weather</span>  <span class="v">62°F · clear</span>  <span class="d">SF · no rain</span>');
+    addLine('<span class="mk">rowan</span>');
+    blip(); await waitG(160, gen);
+    addLine('<span class="m">role</span>       <span class="wh">Founder · Product & Design</span>');
+    blip(); await waitG(140, gen);
+    addLine('<span class="m">location</span>   <span class="d">San Diego, CA</span>');
+    blip(); await waitG(140, gen);
+    addLine('<span class="m">period</span>     <span class="d">2025 — present</span>');
     blip(); await waitG(300, gen);
 
     addLine('');
-    addLine('<span class="d">today</span>');
+    addLine('<span class="mk">—</span> <span class="v">AI listing assistant for real estate agents</span>');
     blip(); await waitG(180, gen);
-    addLine('<span class="mk">—</span> <span class="m">9:00am</span>   <span class="v">standup</span>  <span class="d">eng team · 15min</span>');
-    blip(); await waitG(200, gen);
-    addLine('<span class="mk">—</span> <span class="m">1:00pm</span>   <span class="v">figma review</span>  <span class="d">← prep deck</span>');
-    blip(); await waitG(340, gen);
-
-    addLine('');
-    await thinkFor(['meal timing', 'gym window'], 1600, gen);
-
-    addLine('<span class="mk">—</span> <span class="m">gym</span>      <span class="v">7:30 – 9:00am</span>  <span class="d">window open</span>');
-    blip(); await waitG(200, gen);
-    addLine('<span class="mk">—</span> <span class="m">meals</span>    <span class="v">3 clean meals prepped</span>  <span class="g">✓</span>');
+    addLine('<span class="mk">—</span> <span class="v">the real estate agents, agent</span>');
+    blip(); await waitG(180, gen);
+    addLine('<span class="mk">—</span> <span class="v">designed and built the product, brand, and design system</span>');
+    blip(); await waitG(180, gen);
+    addLine('<span class="mk">—</span> <span class="v">shipped end-to-end: web app, deck engine, marketing site</span>');
     blip();
   }
 
-  async function sceneTrip(gen) {
+  async function sceneStateMachine(gen) {
     const { cmd, cur } = mkPrompt('matt');
     await waitG(700, gen);
-    await type(cmd, 'find a trip', gen);
+    await type(cmd, 'cat state-machine.md', gen);
     enterClick(); await waitG(140, gen); cur.remove();
 
-    await thinkFor([
-      'Jun 14–18 window clear',
-      'scanning flights + hotels',
-      'checking budget',
-    ], 3600, gen);
+    await thinkFor(['reading file', 'parsing entry'], 1800, gen);
 
-    addLine('<span class="v">Tulum, MX</span>  <span class="d">Jun 14–18 · 5 nights · 2 tickets</span>');
-    blip(); await waitG(240, gen);
-    addLine('<span class="mk">—</span> <span class="m">flight</span>   <span class="v">$640/pp · nonstop</span>  <span class="d">AA · SFO → CUN</span>');
-    blip(); await waitG(200, gen);
-    addLine('<span class="mk">—</span> <span class="m">hotel</span>    <span class="v">Casa Malca</span>  <span class="d">boutique · beachfront · $320/night</span>');
-    blip(); await waitG(200, gen);
-    addLine('<span class="mk">—</span> <span class="m">total</span>    <span class="v">$2,880</span>  <span class="d">flights + 5 nights</span>');
-    blip(); await waitG(380, gen);
-
-    const l1 = await spinFor('booking flights', 2600, gen);
-    l1.innerHTML = '<span class="g">confirmed</span>  Jun 14 · AA 847 · SFO → CUN  <span class="d">3.2s</span>';
-    successChime(); await waitG(200, gen);
-    addLine('view booking  <span class="d">#F-2291 · American Airlines</span>');
-    blip(); await waitG(420, gen);
-
-    const l2 = await spinFor('reserving hotel', 2000, gen);
-    l2.innerHTML = '<span class="g">confirmed</span>  Casa Malca · Jun 14–18  <span class="d">2.8s</span>';
-    successChime(); await waitG(200, gen);
-    addLine('view booking  <span class="d">#H-4429 · Tulum</span>');
-    blip();
-  }
-
-  async function sceneWorkout(gen) {
-    const { cmd, cur } = mkPrompt('matt');
-    await waitG(700, gen);
-    await type(cmd, 'build my workout', gen);
-    enterClick(); await waitG(140, gen); cur.remove();
-
-    await thinkFor([
-      'checking recovery score',
-      'reviewing last 7 days',
-      'last push day: 3 days ago',
-    ], 3000, gen);
-
-    addLine('<span class="mk">—</span> <span class="m">recovery</span>  <span class="v">82</span>  <span class="d">+6 from yesterday</span>  <span class="g">ready to push</span>');
-    blip(); await waitG(260, gen);
-    addLine('<span class="mk">—</span> <span class="m">split</span>     <span class="v">push day</span>  <span class="d">chest / shoulders / tris</span>');
-    blip(); await waitG(340, gen);
+    addLine('<span class="mk">state machine</span>');
+    blip(); await waitG(160, gen);
+    addLine('<span class="m">role</span>       <span class="wh">Product Designer · Design Engineer</span>');
+    blip(); await waitG(140, gen);
+    addLine('<span class="m">location</span>   <span class="d">San Diego, CA</span>');
+    blip(); await waitG(140, gen);
+    addLine('<span class="m">period</span>     <span class="d">2025 — present</span>');
+    blip(); await waitG(300, gen);
 
     addLine('');
-    addLine('<span class="d">program</span>');
+    addLine('<span class="mk">—</span> <span class="v">independent design, engineering, and research practice for applied AI</span>');
     blip(); await waitG(180, gen);
-    addLine('<span class="mk">—</span> <span class="m">bench press</span>   <span class="v">4×8</span>  <span class="d">185lb</span>  <span class="g">↑ 10lb</span>');
-    blip(); await waitG(200, gen);
-    addLine('<span class="mk">—</span> <span class="m">incline db</span>     <span class="v">3×10</span>  <span class="d">65lb</span>');
-    blip(); await waitG(200, gen);
-    addLine('<span class="mk">—</span> <span class="m">cable fly</span>      <span class="v">3×15</span>  <span class="d">25lb</span>');
-    blip(); await waitG(200, gen);
-    addLine('<span class="mk">—</span> <span class="m">ohp</span>            <span class="v">3×8</span>   <span class="d">115lb</span>');
-    blip(); await waitG(380, gen);
-
-    const l1 = await spinFor('scheduling', 1200, gen);
-    l1.innerHTML = '<span class="g">added to calendar</span>  gym · 6:00am · 90min  <span class="d">1.1s</span>';
-    successChime();
+    addLine('<span class="mk">—</span> <span class="v">running focused experiments on AI-native products, interfaces, and workflows</span>');
+    blip(); await waitG(180, gen);
+    addLine('<span class="mk">—</span> <span class="v">currently building Rowan</span>');
     blip();
   }
 
-  // ── Scene registry ────────────────────────────────────────────────
+  async function sceneMakersPlace(gen) {
+    const { cmd, cur } = mkPrompt('matt');
+    await waitG(700, gen);
+    await type(cmd, 'cat makersplace.md', gen);
+    enterClick(); await waitG(140, gen); cur.remove();
 
-  const SCENE_NAMES = ['dinner reservation', 'golf round', 'morning brief', 'find a trip', 'build workout'];
-  const SCENE_FNS   = [sceneDinner, sceneFun, sceneMorning, sceneTrip, sceneWorkout];
+    await thinkFor(['reading file', 'parsing entry'], 1800, gen);
+
+    addLine('<span class="mk">makersplace</span>');
+    blip(); await waitG(160, gen);
+    addLine('<span class="m">role</span>       <span class="wh">Sr. Product Designer</span>');
+    blip(); await waitG(140, gen);
+    addLine('<span class="m">location</span>   <span class="d">San Francisco, CA (remote)</span>');
+    blip(); await waitG(140, gen);
+    addLine('<span class="m">period</span>     <span class="d">2022 — 2025</span>');
+    blip(); await waitG(300, gen);
+
+    addLine('');
+    addLine('<span class="mk">—</span> <span class="v">led product design for an NFT fine art marketplace and gallery</span>');
+    blip(); await waitG(180, gen);
+    addLine('<span class="mk">—</span> <span class="v">built and owned the design system from scratch</span>');
+    blip(); await waitG(180, gen);
+    addLine('<span class="mk">—</span> <span class="v">redesigned all legacy pages</span>');
+    blip(); await waitG(180, gen);
+    addLine('<span class="mk">—</span> <span class="v">designed complex creator and collector flows</span>');
+    blip();
+  }
+
+  async function sceneOlympus(gen) {
+    const { cmd, cur } = mkPrompt('matt');
+    await waitG(700, gen);
+    await type(cmd, 'cat olympus-finance.md', gen);
+    enterClick(); await waitG(140, gen); cur.remove();
+
+    await thinkFor(['reading file', 'parsing entry'], 1800, gen);
+
+    addLine('<span class="mk">olympus finance</span>');
+    blip(); await waitG(160, gen);
+    addLine('<span class="m">role</span>       <span class="wh">Lead Product Designer</span>');
+    blip(); await waitG(140, gen);
+    addLine('<span class="m">location</span>   <span class="d">San Francisco, CA (remote)</span>');
+    blip(); await waitG(140, gen);
+    addLine('<span class="m">period</span>     <span class="d">2021 — 2022</span>');
+    blip(); await waitG(300, gen);
+
+    addLine('');
+    addLine('<span class="mk">—</span> <span class="v">designed UX for a DeFi bonding and staking protocol</span>');
+    blip(); await waitG(180, gen);
+    addLine('<span class="mk">—</span> <span class="v">dashboard design for on-chain treasury mechanics</span>');
+    blip(); await waitG(180, gen);
+    addLine('<span class="mk">—</span> <span class="v">brand and interface work during rapid growth phase</span>');
+    blip(); await waitG(180, gen);
+    addLine('<span class="mk">—</span> <span class="v">shipped at speed in a high-stakes protocol environment</span>');
+    blip();
+  }
+
+  async function sceneActionNetwork(gen) {
+    const { cmd, cur } = mkPrompt('matt');
+    await waitG(700, gen);
+    await type(cmd, 'cat action-network.md', gen);
+    enterClick(); await waitG(140, gen); cur.remove();
+
+    await thinkFor(['reading file', 'parsing entry'], 1800, gen);
+
+    addLine('<span class="mk">the action network</span>');
+    blip(); await waitG(160, gen);
+    addLine('<span class="m">role</span>       <span class="wh">Product Designer</span>');
+    blip(); await waitG(140, gen);
+    addLine('<span class="m">location</span>   <span class="d">San Francisco, CA</span>');
+    blip(); await waitG(140, gen);
+    addLine('<span class="m">period</span>     <span class="d">2019 — 2020</span>');
+    blip(); await waitG(300, gen);
+
+    addLine('');
+    addLine('<span class="mk">—</span> <span class="v">product design for a sports betting analytics platform</span>');
+    blip(); await waitG(180, gen);
+    addLine('<span class="mk">—</span> <span class="v">odds displays, line movement, and bet tracking UI</span>');
+    blip(); await waitG(180, gen);
+    addLine('<span class="mk">—</span> <span class="v">high-information density design for fast decisions</span>');
+    blip(); await waitG(180, gen);
+    addLine('<span class="mk">—</span> <span class="v">shipped across iOS, Android, and Web</span>');
+    blip();
+  }
+
+  async function sceneQualcomm(gen) {
+    const { cmd, cur } = mkPrompt('matt');
+    await waitG(700, gen);
+    await type(cmd, 'cat qualcomm.md', gen);
+    enterClick(); await waitG(140, gen); cur.remove();
+
+    await thinkFor(['reading file', 'parsing entry'], 1800, gen);
+
+    addLine('<span class="mk">qualcomm</span>');
+    blip(); await waitG(160, gen);
+    addLine('<span class="m">role</span>       <span class="wh">UX Researcher</span>  <span class="d">· contract</span>');
+    blip(); await waitG(140, gen);
+    addLine('<span class="m">location</span>   <span class="d">San Diego, CA</span>');
+    blip(); await waitG(140, gen);
+    addLine('<span class="m">period</span>     <span class="d">2010</span>');
+    blip(); await waitG(300, gen);
+
+    addLine('');
+    addLine('<span class="mk">—</span> <span class="v">UX research for Qualcomm Retail Solutions</span>');
+    blip(); await waitG(180, gen);
+    addLine('<span class="mk">—</span> <span class="v">conducted research on the Swagg App</span>  <span class="d">· iOS + Android</span>');
+    blip(); await waitG(180, gen);
+    addLine('<span class="mk">—</span> <span class="v">user interviews, usability testing, and synthesis</span>');
+    blip();
+  }
+
+  async function sceneMattSilvermanDesign(gen) {
+    const { cmd, cur } = mkPrompt('matt');
+    await waitG(700, gen);
+    await type(cmd, 'cat matt-silverman-design.md', gen);
+    enterClick(); await waitG(140, gen); cur.remove();
+
+    await thinkFor(['reading file', 'parsing entry'], 1800, gen);
+
+    addLine('<span class="mk">matt silverman design</span>');
+    blip(); await waitG(160, gen);
+    addLine('<span class="m">role</span>       <span class="wh">Designer</span>');
+    blip(); await waitG(140, gen);
+    addLine('<span class="m">location</span>   <span class="d">San Diego and San Francisco, CA</span>');
+    blip(); await waitG(140, gen);
+    addLine('<span class="m">period</span>     <span class="d">2012 — 2018</span>');
+    blip(); await waitG(300, gen);
+
+    addLine('');
+    addLine('<span class="mk">—</span> <span class="v">independent designer working with early-stage startups on strategy, product design, and GTM execution</span>');
+    blip();
+  }
+
+  // ── Scene registry ────────────────────────────────────────────────────
+
+  const SCENE_FNS = [
+    sceneQualcomm,
+    sceneMattSilvermanDesign,
+    sceneActionNetwork,
+    sceneOlympus,
+    sceneMakersPlace,
+    sceneStateMachine,
+    sceneRowan,
+  ];
 
   let sceneIdx = 0;
   let runGen   = 0;
@@ -538,11 +510,14 @@
     const gen = ++runGen;
     out.innerHTML = '';
     try {
+      addLine('<span class="mk">matt silverman</span>  <span class="d">design</span>');
+      addLine('');
       await waitG(700, gen);
       await SCENE_FNS[sceneIdx](gen);
       await waitG(500, gen);
       mkPrompt('matt');
-      await waitG(2800, gen);
+      await waitG(5000 + Math.random() * 1000, gen);
+      sceneIdx = (sceneIdx + 1) % SCENE_FNS.length;
       run();
     } catch (_) {}
   }
@@ -550,33 +525,15 @@
   document.getElementById('btn-prev').addEventListener('click', () => switchScene(sceneIdx - 1));
   document.getElementById('btn-next').addEventListener('click', () => switchScene(sceneIdx + 1));
 
-  const modeSwitch = document.getElementById('mode-switch');
-  const isEmbed = new URLSearchParams(location.search).has('embed');
-  if (isEmbed) document.getElementById('toggle-label').style.display = 'none';
-
-  // Initialize from system preference
+  const modeSwitch  = document.getElementById('mode-switch');
   const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-  if (prefersLight) {
-    document.body.classList.add('light');
-    modeSwitch.checked = true;
-  }
+  if (prefersLight) { document.body.classList.add('light'); modeSwitch.checked = true; }
 
   modeSwitch.addEventListener('change', e => {
     document.body.classList.toggle('light', e.target.checked);
   });
 
-  // Portfolio postMessage: theme + mute control
-  window.addEventListener('message', e => {
-    if (e.data?.type === 'theme') {
-      const isLight = e.data.theme === 'light';
-      document.body.classList.toggle('light', isLight);
-      if (modeSwitch) modeSwitch.checked = isLight;
-    }
-    if (e.data?.type === 'setMuted') {
-      audioMuted = !!e.data.muted;
-      if (!audioMuted) ac(); // resume AudioContext on unmute so sound can play
-    }
-  });
+  document.addEventListener('click', () => ac(), { once: true });
 
   run();
 })();
