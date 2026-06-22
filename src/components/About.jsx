@@ -178,8 +178,6 @@ function About() {
 
       await thinkFor(["loading profile", "resolving identity"], 2200, gen);
 
-      addLine('<span class="mk">—</span> <span class="m">name</span>      <span class="v">Matt Silverman</span>');
-      blip(); await waitG(200, gen);
       addLine('<span class="mk">—</span> <span class="m">born</span>      <span class="v">San Francisco, CA</span>');
       blip(); await waitG(200, gen);
       addLine('<span class="mk">—</span> <span class="m">raised</span>    <span class="v">San Diego, CA</span>');
@@ -198,7 +196,9 @@ function About() {
       blip(); await waitG(200, gen);
       addLine('<span class="mk">—</span> <span class="v">MakersPlace</span>');
       blip(); await waitG(200, gen);
-      addLine('<span class="mk">—</span> <span class="v">Qualcomm</span>');
+      addLine('<span class="mk">—</span> <span class="v">State Machine</span>');
+      blip(); await waitG(200, gen);
+      addLine('<span class="mk">—</span> <span class="v">Rowan</span>');
       blip(); await waitG(340, gen);
 
       addLine("");
@@ -211,8 +211,6 @@ function About() {
       addLine('<span class="mk">—</span> <span class="v">Cursor</span>');
       blip(); await waitG(200, gen);
       addLine('<span class="mk">—</span> <span class="v">Perplexity</span>');
-      blip(); await waitG(200, gen);
-      addLine('<span class="mk">—</span> <span class="v">Xcode</span>');
       blip();
     }
 
