@@ -62,7 +62,7 @@ function Header() {
         const BASE_R = 0.86;
         const OR = 0.72, YF = 0.46;
 
-        // theme-aware dot color (black in light, near-white in dark)
+        // theme-aware dot color
         let dot = [10, 10, 10];
         const readTheme = () => {
             const dark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -72,10 +72,17 @@ function Header() {
         const obs = new MutationObserver(readTheme);
         obs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
-        let hovered = false, angle = 1.2, speed = 0.38, gain = 0.60,
-            specPow = 10, flash = 0, breatheT = 0, prevMs = 0, raf;
+        const BANDS = [
+            { lat:  0.7, freq: 0.31, phase: 0.0, peak: 0.92, width: 0.22 },
+            { lat:  0.1, freq: 0.53, phase: 1.4, peak: 0.80, width: 0.18 },
+            { lat: -0.4, freq: 0.44, phase: 2.8, peak: 0.86, width: 0.20 },
+            { lat: -0.8, freq: 0.67, phase: 4.2, peak: 0.70, width: 0.15 },
+            { lat:  0.4, freq: 0.22, phase: 5.5, peak: 0.62, width: 0.14 },
+        ];
 
-        const onEnter = () => { hovered = true; flash = 1.0; };
+        let hovered = false, t = 0, speed = 0.6, flash = 0, prevMs = 0, raf;
+
+        const onEnter = () => { hovered = true; flash = 1; };
         const onLeave = () => { hovered = false; };
         orbEl.addEventListener('mouseenter', onEnter);
         orbEl.addEventListener('mouseleave', onLeave);
@@ -84,17 +91,9 @@ function Header() {
             const dt = Math.min((ms - prevMs) / 1000, 0.05);
             prevMs = ms;
 
-            speed   += ((hovered ? 2.8  : 0.38) - speed)   * Math.min(1, dt * 4);
-            gain    += ((hovered ? 0.90 : 0.60) - gain)    * Math.min(1, dt * 5);
-            specPow += ((hovered ? 22   : 10)   - specPow) * Math.min(1, dt * 4);
-            flash    = Math.max(0, flash - dt * 2.5);
-            breatheT += dt * 0.55;
-            angle   += speed * dt;
-
-            const R  = BASE_R * (1 + 0.022 * Math.sin(breatheT));
-            const lx = Math.cos(angle) * OR;
-            const ly = Math.sin(angle) * OR * YF;
-            const lz = Math.sqrt(Math.max(0, 1 - lx*lx - ly*ly));
+            speed += ((hovered ? 4.0 : 0.6) - speed) * dt * 3;
+            flash  = Math.max(0, flash - dt * 2.2);
+            t     += dt * speed;
 
             const img = ctx.createImageData(S, S);
             const p   = img.data;
@@ -104,18 +103,24 @@ function Header() {
                     const u  = (px + 0.5) / S * 2 - 1;
                     const v  = -((py + 0.5) / S * 2 - 1);
                     const r2 = u*u + v*v;
-                    if (r2 > R*R) continue;
+                    if (r2 > BASE_R*BASE_R) continue;
 
-                    const sz = Math.sqrt(R*R - r2);
-                    const nx = u/R, ny = v/R, nz = sz/R;
+                    const sz = Math.sqrt(BASE_R*BASE_R - r2);
+                    const nx = u/BASE_R, ny = v/BASE_R, nz = sz/BASE_R;
 
-                    const ndl  = Math.max(0, nx*lx + ny*ly + nz*lz);
-                    const rz   = 2*ndl*nz - lz;
-                    const spec = Math.pow(Math.max(0, rz), specPow);
-                    const rim  = 0.10 * Math.pow(1 - nz, 2.2);
-                    const lit  = (0.05 + ndl*0.58 + spec*0.75 + rim) * gain + flash * 0.30;
+                    let lit = 0.03;
+                    for (const b of BANDS) {
+                        const dist = Math.abs(ny - b.lat) / b.width;
+                        if (dist < 1) {
+                            const envelope = 1 - dist * dist;
+                            const wave = 0.5 + 0.5 * Math.sin(nx * 6.0 + t * b.freq * 3.0 + b.phase);
+                            lit += envelope * wave * b.peak * (0.5 + 0.5 * Math.sin(t * b.freq + b.phase));
+                        }
+                    }
+                    lit *= 0.25 + 0.75 * Math.pow(nz, 0.4);
+                    lit += flash * 0.20;
 
-                    if (Math.min(1, lit) > B8[(py % 8) * 8 + (px % 8)]) {
+                    if (Math.min(1, Math.max(0, lit)) > B8[(py % 8) * 8 + (px % 8)]) {
                         const i = (py * S + px) * 4;
                         p[i] = dot[0]; p[i+1] = dot[1]; p[i+2] = dot[2]; p[i+3] = 255;
                     }
