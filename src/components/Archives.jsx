@@ -228,85 +228,51 @@ function Archives() {
     }
 
     // ── Scenes ─────────────────────────────────────────────────
-    async function sceneStateMachine(gen) {
+    async function sceneQualcomm(gen) {
       const { cmd, cur } = mkPrompt("matt");
       await waitG(700, gen);
-      await type(cmd, "cat state-machine.md", gen);
+      await type(cmd, "cat qualcomm.md", gen);
       enterClick(); await waitG(140, gen); cur.remove();
 
       await thinkFor(["reading file", "parsing entry"], 1800, gen);
 
-      addLine('<span class="mk">state machine</span>');
+      addLine('<span class="mk">qualcomm</span>');
       blip(); await waitG(160, gen);
-      addLine('<span class="m">role</span>       <span class="wh">Product Designer · Design Engineer</span>');
+      addLine('<span class="m">role</span>       <span class="wh">UX Researcher</span>  <span class="d">· contract</span>');
       blip(); await waitG(140, gen);
       addLine('<span class="m">location</span>   <span class="d">San Diego, CA</span>');
       blip(); await waitG(140, gen);
-      addLine('<span class="m">period</span>     <span class="d">2024 — present</span>');
+      addLine('<span class="m">period</span>     <span class="d">2010</span>');
       blip(); await waitG(300, gen);
 
       addLine("");
-      addLine('<span class="mk">—</span> <span class="v">building interaction prototypes and UI concepts</span>');
+      addLine('<span class="mk">—</span> <span class="v">UX research for Qualcomm Retail Solutions</span>');
       blip(); await waitG(180, gen);
-      addLine('<span class="mk">—</span> <span class="v">creative coding</span>  <span class="d">· canvas · physics · Metal shaders</span>');
+      addLine('<span class="mk">—</span> <span class="v">conducted research on the Swagg App</span>  <span class="d">· iOS + Android</span>');
       blip(); await waitG(180, gen);
-      addLine('<span class="mk">—</span> <span class="v">AI-native product design and tooling</span>');
-      blip(); await waitG(180, gen);
-      addLine('<span class="mk">—</span> <span class="v">design systems and component libraries</span>');
+      addLine('<span class="mk">—</span> <span class="v">user interviews, usability testing, and synthesis</span>');
       blip();
     }
 
-    async function sceneMakersPlace(gen) {
+    async function sceneMattSilvermanDesign(gen) {
       const { cmd, cur } = mkPrompt("matt");
       await waitG(700, gen);
-      await type(cmd, "cat makersplace.md", gen);
+      await type(cmd, "cat matt-silverman-design.md", gen);
       enterClick(); await waitG(140, gen); cur.remove();
 
       await thinkFor(["reading file", "parsing entry"], 1800, gen);
 
-      addLine('<span class="mk">makersplace</span>');
+      addLine('<span class="mk">matt silverman design</span>');
       blip(); await waitG(160, gen);
-      addLine('<span class="m">role</span>       <span class="wh">Lead Product Designer</span>');
+      addLine('<span class="m">role</span>       <span class="wh">Designer</span>');
       blip(); await waitG(140, gen);
-      addLine('<span class="m">location</span>   <span class="d">San Francisco, CA</span>');
+      addLine('<span class="m">location</span>   <span class="d">San Diego and San Francisco, CA</span>');
       blip(); await waitG(140, gen);
-      addLine('<span class="m">period</span>     <span class="d">2021 — 2023</span>');
+      addLine('<span class="m">period</span>     <span class="d">2012 — 2018</span>');
       blip(); await waitG(300, gen);
 
       addLine("");
-      addLine('<span class="mk">—</span> <span class="v">led product design for an NFT fine art marketplace</span>');
-      blip(); await waitG(180, gen);
-      addLine('<span class="mk">—</span> <span class="v">built and owned the design system from scratch</span>');
-      blip(); await waitG(180, gen);
-      addLine('<span class="mk">—</span> <span class="v">designed complex creator and collector flows</span>');
-      blip(); await waitG(180, gen);
-      addLine('<span class="mk">—</span> <span class="v">shipped across web and iOS</span>');
-      blip();
-    }
-
-    async function sceneOlympus(gen) {
-      const { cmd, cur } = mkPrompt("matt");
-      await waitG(700, gen);
-      await type(cmd, "cat olympus-finance.md", gen);
-      enterClick(); await waitG(140, gen); cur.remove();
-
-      await thinkFor(["reading file", "parsing entry"], 1800, gen);
-
-      addLine('<span class="mk">olympus finance</span>');
-      blip(); await waitG(160, gen);
-      addLine('<span class="m">role</span>       <span class="wh">Product Designer</span>');
-      blip(); await waitG(140, gen);
-      addLine('<span class="m">period</span>     <span class="d">2021 — 2022</span>');
-      blip(); await waitG(300, gen);
-
-      addLine("");
-      addLine('<span class="mk">—</span> <span class="v">designed UX for a DeFi bonding and staking protocol</span>');
-      blip(); await waitG(180, gen);
-      addLine('<span class="mk">—</span> <span class="v">dashboard design for on-chain treasury mechanics</span>');
-      blip(); await waitG(180, gen);
-      addLine('<span class="mk">—</span> <span class="v">brand and interface work during rapid growth phase</span>');
-      blip(); await waitG(180, gen);
-      addLine('<span class="mk">—</span> <span class="v">shipped at speed in a high-stakes protocol environment</span>');
+      addLine('<span class="mk">—</span> <span class="v">independent designer working with early-stage startups on strategy, product design, and GTM execution</span>');
       blip();
     }
 
@@ -324,56 +290,140 @@ function Archives() {
       blip(); await waitG(140, gen);
       addLine('<span class="m">location</span>   <span class="d">San Francisco, CA</span>');
       blip(); await waitG(140, gen);
-      addLine('<span class="m">period</span>     <span class="d">2018 — 2021</span>');
+      addLine('<span class="m">period</span>     <span class="d">2019 — 2020</span>');
       blip(); await waitG(300, gen);
 
       addLine("");
       addLine('<span class="mk">—</span> <span class="v">product design for a sports betting analytics platform</span>');
       blip(); await waitG(180, gen);
-      addLine('<span class="mk">—</span> <span class="v">odds displays, line movement, and bet tracking UIs</span>');
+      addLine('<span class="mk">—</span> <span class="v">odds displays, line movement, and bet tracking UI</span>');
       blip(); await waitG(180, gen);
       addLine('<span class="mk">—</span> <span class="v">high-information density design for fast decisions</span>');
       blip(); await waitG(180, gen);
-      addLine('<span class="mk">—</span> <span class="v">shipped across iOS, Android, and web</span>');
+      addLine('<span class="mk">—</span> <span class="v">shipped across iOS, Android, and Web</span>');
       blip();
     }
 
-    async function sceneQualcomm(gen) {
+    async function sceneOlympus(gen) {
       const { cmd, cur } = mkPrompt("matt");
       await waitG(700, gen);
-      await type(cmd, "cat qualcomm.md", gen);
+      await type(cmd, "cat olympus-finance.md", gen);
       enterClick(); await waitG(140, gen); cur.remove();
 
       await thinkFor(["reading file", "parsing entry"], 1800, gen);
 
-      addLine('<span class="mk">qualcomm</span>');
+      addLine('<span class="mk">olympus finance</span>');
       blip(); await waitG(160, gen);
-      addLine('<span class="m">role</span>       <span class="wh">UX Designer</span>');
+      addLine('<span class="m">role</span>       <span class="wh">Lead Product Designer</span>');
       blip(); await waitG(140, gen);
-      addLine('<span class="m">location</span>   <span class="d">San Diego, CA</span>');
+      addLine('<span class="m">location</span>   <span class="d">San Francisco, CA (remote)</span>');
       blip(); await waitG(140, gen);
-      addLine('<span class="m">period</span>     <span class="d">2014 — 2018</span>');
+      addLine('<span class="m">period</span>     <span class="d">2021 — 2022</span>');
       blip(); await waitG(300, gen);
 
       addLine("");
-      addLine('<span class="mk">—</span> <span class="v">UX and visual design for enterprise and developer tools</span>');
+      addLine('<span class="mk">—</span> <span class="v">designed UX for a DeFi bonding and staking protocol</span>');
       blip(); await waitG(180, gen);
-      addLine('<span class="mk">—</span> <span class="v">internal tooling for chipset and platform teams</span>');
+      addLine('<span class="mk">—</span> <span class="v">dashboard design for on-chain treasury mechanics</span>');
       blip(); await waitG(180, gen);
-      addLine('<span class="mk">—</span> <span class="v">Snapdragon developer documentation and portal UX</span>');
+      addLine('<span class="mk">—</span> <span class="v">brand and interface work during rapid growth phase</span>');
       blip(); await waitG(180, gen);
-      addLine('<span class="mk">—</span> <span class="v">contributed to design process and standards</span>');
+      addLine('<span class="mk">—</span> <span class="v">shipped at speed in a high-stakes protocol environment</span>');
+      blip();
+    }
+
+    async function sceneMakersPlace(gen) {
+      const { cmd, cur } = mkPrompt("matt");
+      await waitG(700, gen);
+      await type(cmd, "cat makersplace.md", gen);
+      enterClick(); await waitG(140, gen); cur.remove();
+
+      await thinkFor(["reading file", "parsing entry"], 1800, gen);
+
+      addLine('<span class="mk">makersplace</span>');
+      blip(); await waitG(160, gen);
+      addLine('<span class="m">role</span>       <span class="wh">Sr. Product Designer</span>');
+      blip(); await waitG(140, gen);
+      addLine('<span class="m">location</span>   <span class="d">San Francisco, CA (remote)</span>');
+      blip(); await waitG(140, gen);
+      addLine('<span class="m">period</span>     <span class="d">2022 — 2025</span>');
+      blip(); await waitG(300, gen);
+
+      addLine("");
+      addLine('<span class="mk">—</span> <span class="v">led product design for an NFT fine art marketplace and gallery</span>');
+      blip(); await waitG(180, gen);
+      addLine('<span class="mk">—</span> <span class="v">built and owned the design system from scratch</span>');
+      blip(); await waitG(180, gen);
+      addLine('<span class="mk">—</span> <span class="v">redesigned all legacy pages</span>');
+      blip(); await waitG(180, gen);
+      addLine('<span class="mk">—</span> <span class="v">designed complex creator and collector flows</span>');
+      blip();
+    }
+
+    async function sceneStateMachine(gen) {
+      const { cmd, cur } = mkPrompt("matt");
+      await waitG(700, gen);
+      await type(cmd, "cat state-machine.md", gen);
+      enterClick(); await waitG(140, gen); cur.remove();
+
+      await thinkFor(["reading file", "parsing entry"], 1800, gen);
+
+      addLine('<span class="mk">state machine</span>');
+      blip(); await waitG(160, gen);
+      addLine('<span class="m">role</span>       <span class="wh">Product Designer · Design Engineer</span>');
+      blip(); await waitG(140, gen);
+      addLine('<span class="m">location</span>   <span class="d">San Diego, CA</span>');
+      blip(); await waitG(140, gen);
+      addLine('<span class="m">period</span>     <span class="d">2025 — present</span>');
+      blip(); await waitG(300, gen);
+
+      addLine("");
+      addLine('<span class="mk">—</span> <span class="v">independent design, engineering, and research practice for applied AI</span>');
+      blip(); await waitG(180, gen);
+      addLine('<span class="mk">—</span> <span class="v">running focused experiments on AI-native products, interfaces, and workflows</span>');
+      blip(); await waitG(180, gen);
+      addLine('<span class="mk">—</span> <span class="v">currently building Rowan</span>');
+      blip();
+    }
+
+    async function sceneRowan(gen) {
+      const { cmd, cur } = mkPrompt("matt");
+      await waitG(700, gen);
+      await type(cmd, "cat rowan.md", gen);
+      enterClick(); await waitG(140, gen); cur.remove();
+
+      await thinkFor(["reading file", "parsing entry"], 1800, gen);
+
+      addLine('<span class="mk">rowan</span>');
+      blip(); await waitG(160, gen);
+      addLine('<span class="m">role</span>       <span class="wh">Founder · Product & Design</span>');
+      blip(); await waitG(140, gen);
+      addLine('<span class="m">location</span>   <span class="d">San Diego, CA</span>');
+      blip(); await waitG(140, gen);
+      addLine('<span class="m">period</span>     <span class="d">2025 — present</span>');
+      blip(); await waitG(300, gen);
+
+      addLine("");
+      addLine('<span class="mk">—</span> <span class="v">AI listing assistant for real estate agents</span>');
+      blip(); await waitG(180, gen);
+      addLine('<span class="mk">—</span> <span class="v">the real estate agents, agent</span>');
+      blip(); await waitG(180, gen);
+      addLine('<span class="mk">—</span> <span class="v">designed and built the product, brand, and design system</span>');
+      blip(); await waitG(180, gen);
+      addLine('<span class="mk">—</span> <span class="v">shipped end-to-end: web app, deck engine, marketing site</span>');
       blip();
     }
 
     // ── Scene registry / loop ──────────────────────────────────
-    const SCENE_NAMES = ["state-machine.md", "makersplace.md", "olympus-finance.md", "action-network.md", "qualcomm.md"];
+    const SCENE_NAMES = ["qualcomm.md", "matt-silverman-design.md", "action-network.md", "olympus-finance.md", "makersplace.md", "state-machine.md", "rowan.md"];
     const SCENE_FNS = [
-      sceneStateMachine,
-      sceneMakersPlace,
-      sceneOlympus,
-      sceneActionNetwork,
       sceneQualcomm,
+      sceneMattSilvermanDesign,
+      sceneActionNetwork,
+      sceneOlympus,
+      sceneMakersPlace,
+      sceneStateMachine,
+      sceneRowan,
     ];
     let sceneIdx = 0;
 
