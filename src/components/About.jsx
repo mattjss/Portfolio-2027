@@ -190,15 +190,15 @@ function About() {
       addLine("");
       addLine('<span class="d">experience</span>');
       blip(); await waitG(180, gen);
-      addLine('<span class="mk">—</span> <span class="v">The Action Network</span>');
-      blip(); await waitG(200, gen);
-      addLine('<span class="mk">—</span> <span class="v">Olympus Finance</span>');
-      blip(); await waitG(200, gen);
-      addLine('<span class="mk">—</span> <span class="v">MakersPlace</span>');
+      addLine('<span class="mk">—</span> <span class="v">Rowan</span>');
       blip(); await waitG(200, gen);
       addLine('<span class="mk">—</span> <span class="v">State Machine</span>');
       blip(); await waitG(200, gen);
-      addLine('<span class="mk">—</span> <span class="v">Rowan</span>');
+      addLine('<span class="mk">—</span> <span class="v">MakersPlace</span>');
+      blip(); await waitG(200, gen);
+      addLine('<span class="mk">—</span> <span class="v">Olympus Finance</span>');
+      blip(); await waitG(200, gen);
+      addLine('<span class="mk">—</span> <span class="v">The Action Network</span>');
       blip(); await waitG(340, gen);
 
       addLine("");
