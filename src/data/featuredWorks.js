@@ -120,9 +120,9 @@ export const FEATURED_WORKS = [
         isCaseStudy: true,
         brand: "MakersPlace",
         brandIcon: "/icons/MakersPlace.svg",
-        project: "Design System 2.0",
+        project: "Product Detail Page",
         summary:
-            "MakersPlace's legacy design system wasn't built to scale. Rebuilt from scratch with a modular foundation anchored by a flexible card system.",
+            "The PDP was the only place to purchase on MakersPlace. Redesigned with a fixed artwork viewer and scrolling detail rail so collectors could buy without fighting the page.",
         tools: [
             { name: "Figma", icon: "/preview-icon/Figma.svg" },
             { name: "Cursor", icon: "/preview-icon/Cursor.svg" },
@@ -210,7 +210,15 @@ export const FEATURED_WORKS = [
                     type: "text",
                     label: "Results",
                     content:
-                        "The redesigned PDP improved usability and engagement, meeting all industry-standard features. The improvements contributed to increase in GMS, including a 400% increase in 2024 from the Private Sales program, alongside measurable gains in session time and conversion rate.",
+                        "The redesigned PDP improved usability and engagement, meeting all industry-standard features. The improvements contributed to measurable gains in session time, conversion rate, and GMS.",
+                },
+                {
+                    type: "stats",
+                    items: [
+                        { value: "400%", label: "GMS increase — Private Sales" },
+                        { value: "↑", label: "Session time" },
+                        { value: "↑", label: "Conversion rate" },
+                    ],
                 },
             ],
         },
@@ -220,9 +228,9 @@ export const FEATURED_WORKS = [
         isCaseStudy: true,
         brand: "MakersPlace",
         brandIcon: "/icons/MakersPlace.svg",
-        project: "Design System 2.0",
+        project: "Exhibition Page",
         summary:
-            "MakersPlace's legacy design system wasn't built to scale. Rebuilt from scratch with a modular foundation anchored by a flexible card system.",
+            "Brought the exhibition experience in-house, aligned with the new design system, and introduced a mini PDP so collectors could purchase without leaving the page.",
         tools: [
             { name: "Figma", icon: "/preview-icon/Figma.svg" },
             { name: "Cursor", icon: "/preview-icon/Cursor.svg" },
@@ -296,7 +304,16 @@ export const FEATURED_WORKS = [
                     type: "text",
                     label: "Results",
                     content:
-                        "The Exhibition Page was redesigned and built within the MakersPlace platform using the new design system, with newly introduced provenance, auction mechanics, and a richer storytelling experience. The improved purchase flow led to increased sales conversions and higher GMS, while the storytelling elements enhanced artist-collector engagement. Session rate increased 1400%, average session length grew by 5 minutes, conversion rate rose 350%, and the page drove over $840,000 in GMS directly.",
+                        "The Exhibition Page launched with provenance, auction mechanics, and a richer storytelling experience. The improved purchase flow drove immediate, measurable impact across every key metric.",
+                },
+                {
+                    type: "stats",
+                    items: [
+                        { value: "1400%", label: "Session rate" },
+                        { value: "+5 min", label: "Avg. session length" },
+                        { value: "350%", label: "Conversion rate" },
+                        { value: "$840K", label: "Direct GMS" },
+                    ],
                 },
             ],
         },
@@ -306,9 +323,9 @@ export const FEATURED_WORKS = [
         isCaseStudy: true,
         brand: "MakersPlace",
         brandIcon: "/icons/MakersPlace.svg",
-        project: "Design System 2.0",
+        project: "Profile Page",
         summary:
-            "MakersPlace's legacy design system wasn't built to scale. Rebuilt from scratch with a modular foundation anchored by a flexible card system.",
+            "Redesigned the profile page using the modular card system, creating a clear repeatable structure for how artist, collector, and curator activity is organized.",
         tools: [
             { name: "Figma", icon: "/preview-icon/Figma.svg" },
             { name: "Cursor", icon: "/preview-icon/Cursor.svg" },
