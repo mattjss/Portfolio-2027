@@ -277,6 +277,49 @@ function CaseStudyModal({ item, onClose }) {
     return null;
   };
 
+  // Group consecutive media blocks for the overview tab so they render side-by-side
+  const renderOverviewBlocks = (rawBlocks) => {
+    const grouped = [];
+    let i = 0;
+    while (i < rawBlocks.length) {
+      const b = rawBlocks[i];
+      if (b.type === "image" || b.type === "video") {
+        const run = [b];
+        while (i + 1 < rawBlocks.length && (rawBlocks[i + 1].type === "image" || rawBlocks[i + 1].type === "video")) {
+          i++;
+          run.push(rawBlocks[i]);
+        }
+        grouped.push({ _media: true, items: run });
+      } else {
+        grouped.push(b);
+      }
+      i++;
+    }
+
+    return grouped.map((entry, idx) => {
+      if (!entry._media) return renderBlock(entry, idx);
+      const { items } = entry;
+      const gridCls = items.length >= 4 ? "cs-block--media-quad" : items.length >= 2 ? "cs-block--media-pair" : null;
+      const inner = items.map((b, j) => (
+        <div key={j} className="cs-block">
+          <div className="cs-block--media">
+            {b.type === "video" ? (
+              <video autoPlay muted loop playsInline key={b.src}>
+                <source src={b.src} type="video/mp4" />
+              </video>
+            ) : (
+              <img src={b.src} srcSet={b.srcSet} alt={b.alt || ""} />
+            )}
+          </div>
+          {b.caption && <span className="cs-media-caption">{b.caption}</span>}
+        </div>
+      ));
+      return gridCls
+        ? <div key={idx} className={gridCls}>{inner}</div>
+        : inner;
+    });
+  };
+
   return (
     <div className="cs-fs">
       {/* TOP BAR — breadcrumb (left) + close (right) */}
@@ -303,7 +346,7 @@ function CaseStudyModal({ item, onClose }) {
           </div>
         ) : (
           <div className={`cs-fs-content cs-fs-content--${activeTab} ${item.className || ""}`}>
-            {blocks.map(renderBlock)}
+            {activeTab === "overview" ? renderOverviewBlocks(blocks) : blocks.map(renderBlock)}
           </div>
         )}
       </div>
