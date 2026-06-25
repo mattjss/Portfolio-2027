@@ -1150,54 +1150,6 @@ footer .container-fluid {
   margin-top: 6px;
 }
 
-/* Continuation paragraphs — visually anchored with left accent */
-.cs-fs-content--overview .cs-block--cont {
-  border-left: 1px solid rgba(255, 255, 255, 0.08);
-  padding-left: 16px;
-  margin-top: -8px;
-}
-
-.cs-fs-content--overview .cs-block--cont .cs-text {
-  color: #909090;
-}
-
-/* Impact stat callouts */
-.cs-block--stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 1px;
-  background: rgba(255, 255, 255, 0.07);
-  border-radius: 8px;
-  overflow: hidden;
-  margin-top: 4px;
-}
-
-.cs-stat {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 20px 16px;
-  background: #0a0a0a;
-}
-
-.cs-stat-value {
-  font-family: "Geist Mono", monospace;
-  font-size: 22px;
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -0.5px;
-  color: #fafafa;
-}
-
-.cs-stat-label {
-  font-size: 10px;
-  font-weight: 400;
-  letter-spacing: 0.6px;
-  color: #484848;
-  line-height: 14px;
-  text-transform: uppercase;
-}
-
 @media screen and (max-width:1440px) {
   .cs-fs-content {
     gap: 24px;

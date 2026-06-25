@@ -205,7 +205,7 @@ function CaseStudyModal({ item, onClose }) {
   const [pill, setPill] = useState({ x: 0, w: 0 });
 
   const TABS = [
-    { key: "design", label: "Preview" },
+    { key: "design", label: "Design System" },
     { key: "intro", label: "Intro" },
     { key: "team", label: "Team" },
     { key: "overview", label: "Overview" },
@@ -245,23 +245,10 @@ function CaseStudyModal({ item, onClose }) {
 
   const renderBlock = (block, i) => {
     if (block.type === "text") {
-      const isCont = !block.label;
       return (
-        <div key={i} className={`cs-block${isCont ? " cs-block--cont" : ""}`}>
+        <div key={i} className="cs-block">
           {block.label && <h2 className="cs-label">{block.label}</h2>}
           <p className="cs-text">{block.content}</p>
-        </div>
-      );
-    }
-    if (block.type === "stats") {
-      return (
-        <div key={i} className="cs-block cs-block--stats">
-          {block.items.map((s, j) => (
-            <div key={j} className="cs-stat">
-              <span className="cs-stat-value">{s.value}</span>
-              <span className="cs-stat-label">{s.label}</span>
-            </div>
-          ))}
         </div>
       );
     }
