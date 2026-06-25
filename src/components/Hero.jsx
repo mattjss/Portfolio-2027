@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 const LINES = [
   { text: "Matt Silverman" },
   { text: "Based in San Diego, California" },
-  { text: "AI-native product designer with focus on\nstrategy, craft, and code." },
+  { text: "AI-native product designer building products\nthrough strategy, craft, and code." },
 ];
 
 function sleep(ms) {
