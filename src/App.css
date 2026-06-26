@@ -1088,10 +1088,55 @@ footer .container-fluid {
   margin: auto;
   width: min(650px, 88vw);
   padding-bottom: 20vh;
+  gap: 36px;
 }
 
 .cs-fs-content--overview.overview-img .cs-block:last-child .cs-block--media img {
   object-fit: contain;
+}
+
+/* Label — dim structural marker, clearly secondary to body */
+.cs-fs-content--overview .cs-label {
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: 0.4px;
+  color: #4e4e4e;
+}
+
+/* Body — slightly larger, more readable, warm off-white */
+.cs-fs-content--overview .cs-text {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0;
+  color: #c8c8c8;
+}
+
+/* Tighten label-to-content gap */
+.cs-fs-content--overview .cs-block {
+  gap: 5px;
+}
+
+/* Section rhythm — hairline above each labeled block */
+.cs-fs-content--overview .cs-block:has(.cs-label) {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 24px;
+}
+
+.cs-fs-content--overview .cs-block:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+/* Caption — left-aligned, very dim */
+.cs-fs-content--overview .cs-media-caption {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+  text-align: left;
+  color: #444;
+  margin-top: 8px;
 }
 
 @media screen and (max-width:1440px) {
@@ -1103,6 +1148,7 @@ footer .container-fluid {
 @media screen and (max-width:768px) {
   .cs-fs-content--overview {
     padding-bottom: 20dvh;
+    gap: 28px;
   }
 }
 
