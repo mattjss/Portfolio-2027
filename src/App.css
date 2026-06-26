@@ -1139,6 +1139,23 @@ footer .container-fluid {
   margin-top: 8px;
 }
 
+/* Media — edge-to-edge, no padding, soft corners */
+.cs-fs-content--overview .cs-block--media {
+  padding: 0;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #111;
+}
+
+.cs-fs-content--overview .cs-block--media img,
+.cs-fs-content--overview .cs-block--media video {
+  border-radius: 0;
+  max-height: none;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
 @media screen and (max-width:1440px) {
   .cs-fs-content {
     gap: 24px;
