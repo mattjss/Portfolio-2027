@@ -16,7 +16,7 @@
   --color-border-dark: #3a3a3a;
 
   /* page-level */
-  --page-bg: #ffffff;
+  --page-bg: #fcfcfc;
   --page-text: #bababa;
   --card-border: #eaeaea;
   --cta-color: #0a0a0a;
@@ -2156,7 +2156,7 @@ h1 span {
 .pg-card-inner {
   position: relative;
   aspect-ratio: 1 / 1;
-  background: transparent;
+  background: #fcfcfc;
   border-radius: 4px;
   border: 1px solid #eaeaea;
   overflow: hidden;
@@ -2164,6 +2164,7 @@ h1 span {
 }
 
 [data-theme="dark"] .pg-card-inner {
+  background: #101010;
   border-color: #1a1a1a !important;
 }
 

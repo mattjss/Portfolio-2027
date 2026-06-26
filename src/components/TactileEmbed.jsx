@@ -1,4 +1,17 @@
+import { useEffect, useState } from "react";
+
 export default function TactileEmbed() {
+  const [isDark, setIsDark] = useState(
+    () => typeof document !== "undefined" && document.documentElement.getAttribute("data-theme") === "dark"
+  );
+  useEffect(() => {
+    const read = () => setIsDark(document.documentElement.getAttribute("data-theme") === "dark");
+    read();
+    const obs = new MutationObserver(read);
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => obs.disconnect();
+  }, []);
+
   return (
     <img
       src="/playground/tactile/tactile-1x"
@@ -12,7 +25,7 @@ export default function TactileEmbed() {
         height: "100%",
         objectFit: "cover",
         display: "block",
-        background: "#101010",
+        background: isDark ? "#101010" : "#FCFCFC",
       }}
     />
   );

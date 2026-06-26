@@ -1,8 +1,19 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function SyncEmbed({ muted = true }) {
   const ref = useRef(null);
   const mutedRef = useRef(muted);
+
+  const [isDark, setIsDark] = useState(
+    () => typeof document !== "undefined" && document.documentElement.getAttribute("data-theme") === "dark"
+  );
+  useEffect(() => {
+    const read = () => setIsDark(document.documentElement.getAttribute("data-theme") === "dark");
+    read();
+    const obs = new MutationObserver(read);
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => obs.disconnect();
+  }, []);
   mutedRef.current = muted;
 
   useEffect(() => {
@@ -78,7 +89,7 @@ export default function SyncEmbed({ muted = true }) {
         height: "150%",
         border: "none",
         display: "block",
-        background: "#101010",
+        background: isDark ? "#101010" : "#FCFCFC",
       }}
     />
   );
