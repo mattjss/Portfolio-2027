@@ -1508,7 +1508,7 @@ h1 span {
 ══════════════════════════════════════ */
 .about-terminal .container,
 .about-bio .container {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1517,7 +1517,7 @@ h1 span {
 /* ── TERMINAL CARD (holds the typing terminal) ── */
 .about-terminal-card {
   width: 422px;
-  min-height: 422px;
+  height: 422px;
   border-radius: 10px;
   overflow: hidden;
   position: relative;
@@ -1539,15 +1539,10 @@ h1 span {
 }
 
 @media (max-width: 480px) {
-  .about-terminal .container {
-    padding: 32px 16px;
-    align-items: flex-start;
-  }
-
   .about-terminal-card {
     width: 100%;
     max-width: 322px;
-    min-height: 322px;
+    height: 322px;
   }
 }
 
@@ -1556,6 +1551,7 @@ h1 span {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  overflow: hidden;
 }
 
 .about-terminal-output {
