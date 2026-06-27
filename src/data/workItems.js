@@ -66,7 +66,7 @@ export const WORK_ITEMS = [
         { type: "text", label: "Other Collaborators", content: "Stu Ohler, Liana Rogers, Aram Saloot, Nouman Saeed, Brian Shen, Sudhir Koneru, and many more." },
       ],
       overview: [
-        { type: "text", label: "Problem", content: "The legacy PDP had significant UX and technical issues. Artwork wasn’t displaying at full quality, preventing users from inspecting details before purchase. The layout placed artwork above the fold with all details below, forcing collectors to constantly scroll back and forth—disrupting the buying process. Industry-standard features were also missing." },
+        { type: "text", label: "Problem", content: "The legacy PDP had several UX and technical issues. Artwork was displayed too small and didn’t render at full quality, making it hard for collectors to inspect pieces before purchase. Key details like provenance, artist information, and other industry-standard signals were often hidden below the fold or missing from the right rail, which hurt trust and sales" },
         { type: "video", src: "/vids/cs-p-2-o-1.mp4", caption: "Before" },
         { type: "text", label: "Goal", content: "Create an immersive, intuitive PDP that allowed collectors to view artwork at full quality while seamlessly accessing details, meeting industry standards, and driving improvements in session time, conversion rate, and GMS." },
         { type: "image", src: "/images/cs-p-2-overview-1.png", caption: "After" },

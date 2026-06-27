@@ -171,7 +171,7 @@ export const FEATURED_WORKS = [
                     type: "text",
                     label: "Problem",
                     content:
-                        "The legacy PDP had significant UX and technical issues. Artwork wasn’t displaying at full quality, preventing users from inspecting details before purchase. The layout placed artwork above the fold with all details below, forcing collectors to constantly scroll back and forth—disrupting the buying process. Industry-standard features were also missing.",
+                        "The legacy PDP had several UX and technical issues. Artwork was displayed too small and didn’t render at full quality, making it hard for collectors to inspect pieces before purchase. Key details like provenance, artist information, and other industry-standard signals were often hidden below the fold or missing from the right rail, which hurt trust and sales",
                 },
                 { type: "video", src: "/vids/cs-p-2-o-1.mp4", caption: "Before" },
                 {
