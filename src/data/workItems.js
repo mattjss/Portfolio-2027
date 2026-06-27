@@ -31,7 +31,6 @@ export const WORK_ITEMS = [
         { type: "text", content: "The new system was a modular card framework with hero and standard cards for each entity type (artist, artworks, exhibitions, editorial). The legacy homepage had stacked carousels with no visual distinction. The new system gave each entity a distinct identity, making pages scannable and intentional, while giving the business and marketing teams flexibility to spotlight priorities without needing design support every time." },
         { type: "text", label: "Results", content: "The new system brought immediate impact. Faster design iteration, fewer developer questions during handoff, and a more premium, cohesive experience that aligned with the brand’s evolution. The modular foundation made it easier to scale and maintain as the product grew." },
         { type: "image", src: "/images/cs-overview-1.png", caption: "Primary Palette" },
-        { type: "image", src: "/images/cs-overview-2.png", caption: "Geometric Shapes" },
         { type: "image", src: "/images/cs-overview-3.png", caption: "High Contrast" },
         { type: "image", src: "/images/cs-overview-5.png", caption: "Card System - Hero" },
         { type: "image", src: "/images/cs-overview-6.png", caption: "Card System - Standard " },
