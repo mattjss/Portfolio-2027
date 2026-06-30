@@ -279,9 +279,14 @@ function CaseStudyModal({ item, onClose }) {
 
   return (
     <div className="cs-fs">
-      {/* TOP BAR — breadcrumb (left) + close (right) */}
+      {/* TOP BAR — brand (left) + close (right) */}
       <div className="cs-fs-topbar">
-        <span className="cs-fs-crumb">{item.category}</span>
+        <div className="cs-fs-brand archive-info-head-flex">
+          {item.brandIcon && (
+            <img src={item.brandIcon} alt={item.brand} width={16} height={16} />
+          )}
+          <h3>{item.brand}</h3>
+        </div>
         <button className="custom-close cs-fs-close" onClick={onClose} aria-label="Close">
           <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
             <path d="M2.95746 9.75L5.99999 6.70705L9.04299 9.75L9.74999 9.04295L6.70704 6L9.75049 2.95696L9.04354 2.25L5.99999 5.29295L2.95704 2.25L2.25 2.95703L5.29299 6L2.25049 9.04305L2.95746 9.75Z" fill="#AAAAAA" />
@@ -308,13 +313,8 @@ function CaseStudyModal({ item, onClose }) {
         )}
       </div>
 
-      {/* BOTTOM-LEFT — brand */}
-      <div className="cs-fs-brand archive-info-head-flex">
-        {item.brandIcon && (
-          <img src={item.brandIcon} alt={item.brand} width={16} height={16} />
-        )}
-        <h3>{item.brand}</h3>
-      </div>
+      {/* BOTTOM-LEFT — breadcrumb */}
+      <span className="cs-fs-crumb">{item.category}</span>
 
       {/* BOTTOM-RIGHT — tab bar */}
       <div
@@ -396,9 +396,14 @@ function RegularModal({ item, onClose, soundEnabled, setSoundEnabled }) {
 
   return (
     <div className="pgm">
-      {/* TOP BAR — category (left) + close (right) */}
+      {/* TOP BAR — brand (left) + close (right) */}
       <div className="pgm-topbar">
-        <span className="archive-footer-tag">{item.category}</span>
+        <div className="pgm-brand archive-info-head-flex">
+          {item.brandIcon && (
+            <img src={item.brandIcon} alt={item.brand} width={16} height={16} />
+          )}
+          <h3>{item.brand}</h3>
+        </div>
         <button className="custom-close pgm-close" onClick={onClose} aria-label="Close">
           <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
             <path d="M2.95746 9.75L5.99999 6.70705L9.04299 9.75L9.74999 9.04295L6.70704 6L9.75049 2.95696L9.04354 2.25L5.99999 5.29295L2.95704 2.25L2.25 2.95703L5.29299 6L2.25049 9.04305L2.95746 9.75Z" fill="#AAAAAA" />
@@ -478,14 +483,9 @@ function RegularModal({ item, onClose, soundEnabled, setSoundEnabled }) {
         {dots}
       </div>{/* /pgm-stage */}
 
-      {/* BOTTOM BAR — brand (left) + links (right) */}
+      {/* BOTTOM BAR — category (left) + links (right) */}
       <div className="pgm-bottombar">
-        <div className="pgm-brand archive-info-head-flex">
-          {item.brandIcon && (
-            <img src={item.brandIcon} alt={item.brand} width={16} height={16} />
-          )}
-          <h3>{item.brand}</h3>
-        </div>
+        <span className="archive-footer-tag">{item.category}</span>
 
         <div className="pgm-links">
           {item.inspiration && (

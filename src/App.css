@@ -1171,6 +1171,10 @@ footer .container-fluid {
 
 /* CORNERS */
 .cs-fs-crumb {
+  position: absolute;
+  left: 32px;
+  bottom: 32px;
+  z-index: 10;
   color: #606060;
   font-family: Geist;
   font-size: 12px;
@@ -1184,10 +1188,7 @@ footer .container-fluid {
 }
 
 .cs-fs-brand {
-  position: absolute;
-  left: 32px;
-  bottom: 32px;
-  z-index: 10;
+  position: static;
 }
 
 /* TAB BAR — bottom-right pill, dark liquid glass */
@@ -1301,7 +1302,7 @@ footer .container-fluid {
     width: 100%;
   }
 
-  .cs-fs-brand {
+  .cs-fs-crumb {
     display: none;
   }
 
@@ -2413,7 +2414,7 @@ h1 span {
   background: transparent;
 }
 
-.pgm-topbar .archive-footer-tag {
+.pgm-bottombar .archive-footer-tag {
   margin-top: 0;
 }
 
