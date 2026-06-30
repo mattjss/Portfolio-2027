@@ -105,7 +105,7 @@ const PLAYGROUND_ITEMS = [
     sound: true,
     open: { href: "https://mattjss.github.io/Save-Button/", label: "Open Save Button" },
     brand: "State Machine",
-    brandIcon: "/icons/state-white.svg",
+    brandIcon: "/icons/state-machine.svg",
     project: "Save",
     summary: "A save button with layered micro-interaction states.",
     tools: [
@@ -121,7 +121,7 @@ const PLAYGROUND_ITEMS = [
     sound: true,
     open: { href: "https://mattjss.github.io/Vector/", label: "Open Vector" },
     brand: "State Machine",
-    brandIcon: "/icons/state-white.svg",
+    brandIcon: "/icons/state-machine.svg",
     project: "Vector",
     summary: "A 16×16 grid of bars that rotate in unison to face your cursor like compass needles. Click fires a rotational shockwave that ripples across the field.",
     tools: [
@@ -136,7 +136,7 @@ const PLAYGROUND_ITEMS = [
     sound: true,
     open: { href: "https://mattjss.github.io/Matrix-Loader/", label: "Open Matrix Loader" },
     brand: "State Machine",
-    brandIcon: "/icons/state-white.svg",
+    brandIcon: "/icons/state-machine.svg",
     project: "Matrix Loader",
     summary: "An interaction design exploration.",
     tools: [
@@ -164,7 +164,7 @@ const PLAYGROUND_ITEMS = [
     Component: TactileEmbed,
     sound: false,
     brand: "State Machine",
-    brandIcon: "/icons/state-white.svg",
+    brandIcon: "/icons/state-machine.svg",
     project: "Tactile",
     summary: "A daily UI exploration recreating tactile buttons with realistic light and depth.",
     previewUrl: "",
@@ -180,7 +180,7 @@ const PLAYGROUND_ITEMS = [
     sound: false,
     open: { href: "https://mattjss.github.io/Logo-Carousel/", label: "Open Logo Carousel" },
     brand: "State Machine",
-    brandIcon: "/icons/state-white.svg",
+    brandIcon: "/icons/state-machine.svg",
     project: "Logo Carousel",
     summary: "A seamlessly looping logo carousel with edge fades.",
     tools: [
