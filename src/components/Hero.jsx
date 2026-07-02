@@ -210,14 +210,18 @@ function Hero() {
   return (
     <section className="hero" ref={heroRef}>
       <div className="hero-frame">
-        <h1 ref={h1Ref}></h1>
-        <button
-          className="pg-ctrl-btn hero-sound-btn"
-          aria-label="Toggle sound"
-          onClick={() => { const next = !heroMuted; setHeroMuted(next); mutedRef.current = next; }}
-        >
-          {heroMuted ? <SoundOffIcon /> : <SoundOnIcon />}
-        </button>
+        <div className="hero-frame-body">
+          <h1 ref={h1Ref}></h1>
+        </div>
+        <div className="hero-frame-bottom">
+          <button
+            className="pg-ctrl-btn"
+            aria-label="Toggle sound"
+            onClick={() => { const next = !heroMuted; setHeroMuted(next); mutedRef.current = next; }}
+          >
+            {heroMuted ? <SoundOffIcon /> : <SoundOnIcon />}
+          </button>
+        </div>
       </div>
     </section>
   );
