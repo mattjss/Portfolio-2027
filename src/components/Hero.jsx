@@ -1,4 +1,17 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+
+const SoundOnIcon = () => (
+  <svg viewBox="0 0 16 16">
+    <path d="M7 2L3.5 6H1v4h2.5L7 14V2z" fill="currentColor" />
+    <path d="M10 5.5a4 4 0 0 1 0 5M12.5 3a7 7 0 0 1 0 10" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" fill="none" />
+  </svg>
+);
+const SoundOffIcon = () => (
+  <svg viewBox="0 0 16 16">
+    <path d="M7 2L3.5 6H1v4h2.5L7 14V2z" fill="currentColor" />
+    <path d="M11 6l4 4M15 6l-4 4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" fill="none" />
+  </svg>
+);
 
 const LINES = [
   { text: "Matt Silverman" },
@@ -14,6 +27,8 @@ function Hero() {
   const h1Ref = useRef(null);
   const heroRef = useRef(null);
   const audibleRef = useRef(true);
+  const [heroMuted, setHeroMuted] = useState(false);
+  const mutedRef = useRef(false);
 
   useEffect(() => {
     const h1 = h1Ref.current;
@@ -82,7 +97,7 @@ function Hero() {
     }
 
     function keyClick() {
-      if (!audibleRef.current) return;
+      if (!audibleRef.current || mutedRef.current) return;
       try {
         const c = ac(), t = c.currentTime;
         const noise = mkNoise(c, 0.005);
@@ -105,7 +120,7 @@ function Hero() {
     }
 
     function enterClick() {
-      if (!audibleRef.current) return;
+      if (!audibleRef.current || mutedRef.current) return;
       try {
         const c = ac(), t = c.currentTime;
         const noise = mkNoise(c, 0.008);
@@ -128,7 +143,7 @@ function Hero() {
     }
 
     function successChime() {
-      if (!audibleRef.current) return;
+      if (!audibleRef.current || mutedRef.current) return;
       try {
         const c = ac();
         [[880, 0, 0.12, 0.15], [1108, 0.18, 0.10, 0.18]].forEach(([hz, delay, vol, decay]) => {
@@ -197,6 +212,13 @@ function Hero() {
       <div className="container">
         <h1 ref={h1Ref}></h1>
       </div>
+      <button
+        className="pg-ctrl-btn hero-sound-btn"
+        aria-label="Toggle sound"
+        onClick={() => { const next = !heroMuted; setHeroMuted(next); mutedRef.current = next; }}
+      >
+        {heroMuted ? <SoundOffIcon /> : <SoundOnIcon />}
+      </button>
     </section>
   );
 }

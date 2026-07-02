@@ -220,6 +220,13 @@ header .container-fluid {
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+}
+
+.hero-sound-btn {
+  position: absolute;
+  bottom: 32px;
+  right: 32px;
 }
 
 .products {
