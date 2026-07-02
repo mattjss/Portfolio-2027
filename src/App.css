@@ -222,14 +222,15 @@ header .container-fluid {
   justify-content: center;
 }
 
-.hero-frame-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
 .hero-frame {
   width: 422px;
+  position: relative;
+}
+
+.hero-sound-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
 
 @media (max-width: 480px) {

@@ -209,10 +209,8 @@ function Hero() {
 
   return (
     <section className="hero" ref={heroRef}>
-      <div className="hero-frame-row">
-        <div className="hero-frame">
-          <h1 ref={h1Ref}></h1>
-        </div>
+      <div className="hero-frame">
+        <h1 ref={h1Ref}></h1>
         <button
           className="pg-ctrl-btn hero-sound-btn"
           aria-label="Toggle sound"
