@@ -209,16 +209,18 @@ function Hero() {
 
   return (
     <section className="hero" ref={heroRef}>
-      <div className="container">
-        <h1 ref={h1Ref}></h1>
+      <div className="hero-frame-row">
+        <div className="hero-frame">
+          <h1 ref={h1Ref}></h1>
+        </div>
+        <button
+          className="pg-ctrl-btn hero-sound-btn"
+          aria-label="Toggle sound"
+          onClick={() => { const next = !heroMuted; setHeroMuted(next); mutedRef.current = next; }}
+        >
+          {heroMuted ? <SoundOffIcon /> : <SoundOnIcon />}
+        </button>
       </div>
-      <button
-        className="pg-ctrl-btn hero-sound-btn"
-        aria-label="Toggle sound"
-        onClick={() => { const next = !heroMuted; setHeroMuted(next); mutedRef.current = next; }}
-      >
-        {heroMuted ? <SoundOffIcon /> : <SoundOnIcon />}
-      </button>
     </section>
   );
 }
