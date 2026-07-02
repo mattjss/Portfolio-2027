@@ -224,29 +224,21 @@ header .container-fluid {
 
 .hero-frame {
   width: 422px;
-  height: 422px;
   display: flex;
   flex-direction: column;
-}
-
-.hero-frame-body {
-  flex: 1;
-  display: flex;
   align-items: center;
-  justify-content: center;
 }
 
 .hero-frame-bottom {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-bottom: 18px;
+  padding-top: 20px;
 }
 
 @media (max-width: 480px) {
   .hero-frame {
     width: 322px;
-    height: 322px;
   }
 }
 

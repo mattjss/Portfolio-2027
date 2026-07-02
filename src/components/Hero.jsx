@@ -210,9 +210,7 @@ function Hero() {
   return (
     <section className="hero" ref={heroRef}>
       <div className="hero-frame">
-        <div className="hero-frame-body">
-          <h1 ref={h1Ref}></h1>
-        </div>
+        <h1 ref={h1Ref}></h1>
         <div className="hero-frame-bottom">
           <button
             className="pg-ctrl-btn"
