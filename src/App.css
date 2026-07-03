@@ -1572,8 +1572,13 @@ h1 span {
     height: 322px;
   }
 
-  .about-terminal--bio .about-terminal-output {
-    line-height: 1.4;
+  .about-terminal--bio .about-terminal-card {
+    height: 460px;
+  }
+
+  .about-terminal--bio .container {
+    align-items: flex-end;
+    padding-bottom: calc(50vh - 161px);
   }
 }
 
