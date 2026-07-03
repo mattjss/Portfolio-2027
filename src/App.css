@@ -1573,6 +1573,18 @@ h1 span {
   }
 
   /* About page only — remove fixed frame, anchor bottom, grow upward */
+  .about-terminal {
+    min-height: 100vh;
+    height: auto;
+  }
+
+  .about-terminal .container {
+    height: auto;
+    min-height: 100vh;
+    align-items: flex-end;
+    padding-bottom: calc(50vh - 161px);
+  }
+
   .about-terminal .about-terminal-card {
     height: auto;
     border: none;
@@ -1584,12 +1596,6 @@ h1 span {
   .about-terminal .about-terminal-body {
     overflow: visible;
     flex: none;
-  }
-
-  /* Pin the bottom at the same Y as a centered 322px card would be */
-  .about-terminal .container {
-    align-items: flex-end;
-    padding-bottom: calc(50vh - 161px);
   }
 }
 
