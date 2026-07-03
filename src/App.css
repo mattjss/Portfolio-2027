@@ -1571,6 +1571,10 @@ h1 span {
     max-width: 322px;
     height: 322px;
   }
+
+  .about-terminal--bio .about-terminal-card {
+    height: 460px;
+  }
 }
 
 .about-terminal-body {

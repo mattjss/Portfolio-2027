@@ -397,7 +397,7 @@ function About() {
       <ClockwiseCta />
 
       <main>
-        <section className="about-terminal" ref={heroRef}>
+        <section className="about-terminal about-terminal--bio" ref={heroRef}>
           <div className="container">
             <div className="about-terminal-card">
               <div className="about-terminal-body">
