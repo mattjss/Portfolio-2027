@@ -1572,14 +1572,6 @@ h1 span {
     height: 322px;
   }
 
-  .about-terminal--bio .about-terminal-card {
-    overflow: visible;
-  }
-
-  .about-terminal--bio .about-terminal-body {
-    overflow: visible;
-    justify-content: flex-end;
-  }
 }
 
 .about-terminal-body {
