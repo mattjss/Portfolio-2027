@@ -19,6 +19,12 @@ const LINES = [
   { text: "AI-native product designer building products\nthrough strategy, craft, and code." },
 ];
 
+const LINES_MOBILE = [
+  { text: "Matt Silverman" },
+  { text: "Based in San Diego, California" },
+  { text: "AI-native product designer\nbuilding products through\nstrategy, craft, and code." },
+];
+
 function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
@@ -63,20 +69,27 @@ function Hero() {
     h1.appendChild(t1);
     h1.appendChild(document.createElement("br"));
 
+    const isMobile = window.innerWidth <= 768;
+    const lines = isMobile ? LINES_MOBILE : LINES;
+
     const tagline = document.createElement("span");
     h1.appendChild(tagline);
-    const [tagA, tagB] = LINES[2].text.split("\n");
-    const tA = document.createTextNode("");
-    tagline.appendChild(tA);
-    tagline.appendChild(document.createElement("br"));
-    const tB = document.createTextNode("");
-    tagline.appendChild(tB);
+    const tagParts = lines[2].text.split("\n");
+    const tagNodes = tagParts.map((_, i) => {
+      const tn = document.createTextNode("");
+      tagline.appendChild(tn);
+      if (i < tagParts.length - 1) tagline.appendChild(document.createElement("br"));
+      return tn;
+    });
 
     const segments = [
-      { node: t0, text: LINES[0].text, brk: "enter" },
-      { node: t1, text: LINES[1].text, brk: "enter" },
-      { node: tA, text: tagA,          brk: "silent" },
-      { node: tB, text: tagB,          brk: null },
+      { node: t0, text: lines[0].text, brk: "enter" },
+      { node: t1, text: lines[1].text, brk: "enter" },
+      ...tagNodes.map((tn, i) => ({
+        node: tn,
+        text: tagParts[i],
+        brk: i < tagNodes.length - 1 ? "silent" : null,
+      })),
     ];
 
     // ── Web Audio setup ──

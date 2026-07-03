@@ -1444,6 +1444,12 @@ footer .container-fluid {
   height: 104px;
 }
 
+@media (max-width: 768px) {
+  .hero h1 {
+    height: 128px;
+  }
+}
+
 h1 span {
   color: var(--color-dark-grey);
   font-weight: 300;
