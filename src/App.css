@@ -1571,6 +1571,26 @@ h1 span {
     max-width: 322px;
     height: 322px;
   }
+
+  /* About page only — remove fixed frame, anchor bottom, grow upward */
+  .about-terminal .about-terminal-card {
+    height: auto;
+    border: none;
+    background: transparent;
+    border-radius: 0;
+    overflow: visible;
+  }
+
+  .about-terminal .about-terminal-body {
+    overflow: visible;
+    flex: none;
+  }
+
+  /* Pin the bottom at the same Y as a centered 322px card would be */
+  .about-terminal .container {
+    align-items: flex-end;
+    padding-bottom: calc(50vh - 161px);
+  }
 }
 
 .about-terminal-body {
