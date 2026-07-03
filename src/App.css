@@ -1569,13 +1569,7 @@ h1 span {
   .about-terminal-card {
     width: 100%;
     max-width: 322px;
-    height: auto;
-    overflow: visible;
-  }
-
-  .about-terminal-body {
-    overflow: visible;
-    flex: none;
+    height: 322px;
   }
 }
 
@@ -2221,8 +2215,7 @@ h1 span {
   .pg-terminal-frame {
     width: 100%;
     max-width: 322px;
-    height: auto;
-    overflow: visible;
+    height: 372px;
   }
 }
 

@@ -197,19 +197,22 @@ function About() {
       addLine('<span class="mk">—</span> <span class="v">Olympus Finance</span>');
       blip(); await waitG(200, gen);
       addLine('<span class="mk">—</span> <span class="v">The Action Network</span>');
-      blip(); await waitG(340, gen);
-
-      addLine("");
-      addLine('<span class="d">tools</span>');
-      blip(); await waitG(180, gen);
-      addLine('<span class="mk">—</span> <span class="v">Figma</span>');
-      blip(); await waitG(200, gen);
-      addLine('<span class="mk">—</span> <span class="v">Claude Code</span>');
-      blip(); await waitG(200, gen);
-      addLine('<span class="mk">—</span> <span class="v">Cursor</span>');
-      blip(); await waitG(200, gen);
-      addLine('<span class="mk">—</span> <span class="v">Perplexity</span>');
       blip();
+
+      if (window.innerWidth > 480) {
+        await waitG(340, gen);
+        addLine("");
+        addLine('<span class="d">tools</span>');
+        blip(); await waitG(180, gen);
+        addLine('<span class="mk">—</span> <span class="v">Figma</span>');
+        blip(); await waitG(200, gen);
+        addLine('<span class="mk">—</span> <span class="v">Claude Code</span>');
+        blip(); await waitG(200, gen);
+        addLine('<span class="mk">—</span> <span class="v">Cursor</span>');
+        blip(); await waitG(200, gen);
+        addLine('<span class="mk">—</span> <span class="v">Perplexity</span>');
+        blip();
+      }
     }
 
     async function sceneProInterests(gen) {
