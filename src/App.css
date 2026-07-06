@@ -64,14 +64,14 @@ body {
   width: 100%;
   max-width: 100%;
   margin: 0 auto;
-  padding-left: 32px;
-  padding-right: 32px;
+  padding-left: 16px;
+  padding-right: 16px;
 }
 
 @media screen and (max-width: 768px) {
   .container-fluid {
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 12px;
+    padding-right: 12px;
   }
 }
 
@@ -79,14 +79,14 @@ body {
   width: 100%;
   max-width: 100%;
   margin: 0 auto;
-  padding-left: 64px;
-  padding-right: 64px;
+  padding-left: 48px;
+  padding-right: 48px;
 }
 
 @media screen and (max-width: 768px) {
   .container {
-    padding-left: 32px;
-    padding-right: 32px;
+    padding-left: 24px;
+    padding-right: 24px;
   }
 }
 
@@ -125,7 +125,7 @@ header {
   left: 0;
   right: 0;
   z-index: 100;
-  padding-top: 32px;
+  padding-top: 16px;
 }
 
 @media screen and (max-width: 768px) {
@@ -255,8 +255,8 @@ header .container-fluid {
   justify-content: start;
   gap: 36px;
   position: fixed;
-  left: 32px;
-  bottom: 32px;
+  left: 16px;
+  bottom: 16px;
   z-index: 100;
   transition: bottom 0.2s ease;
 }
@@ -293,8 +293,8 @@ header .container-fluid {
 /* ── CLOCKWISE CTA ── */
 .clockwise-cta {
   position: fixed;
-  right: 32px;
-  bottom: 32px;
+  right: 16px;
+  bottom: 16px;
   z-index: 100;
   transition: bottom 0.2s ease;
   padding: 0;
@@ -340,11 +340,11 @@ header .container-fluid {
 
 @media screen and (max-width: 768px) {
   .socials {
-    left: 10px;
+    left: 8px;
   }
 
   .clockwise-cta {
-    right: 10px;
+    right: 8px;
   }
 }
 
@@ -406,7 +406,7 @@ header .container-fluid {
 
 /* ── FOOTER ── */
 footer {
-  padding-bottom: 24px;
+  padding-bottom: 16px;
   color: var(--color-black);
 }
 
@@ -594,8 +594,8 @@ footer .container-fluid {
 /* CLOSE BUTTON — dark liquid glass */
 .custom-close {
   position: absolute;
-  top: 32px;
-  right: 48px;
+  top: 16px;
+  right: 16px;
   z-index: 10;
   display: flex;
   width: 28px;
@@ -1192,8 +1192,8 @@ footer .container-fluid {
 /* CORNERS */
 .cs-fs-crumb {
   position: absolute;
-  left: 32px;
-  bottom: 32px;
+  left: 16px;
+  bottom: 16px;
   z-index: 10;
   color: #606060;
   font-family: Geist;
@@ -1214,8 +1214,8 @@ footer .container-fluid {
 /* TAB BAR — bottom-right pill, dark liquid glass */
 .cs-fs-tabbar {
   position: absolute;
-  right: 32px;
-  bottom: 32px;
+  right: 16px;
+  bottom: 16px;
   z-index: 10;
   display: flex;
   align-items: center;
@@ -1265,7 +1265,7 @@ footer .container-fluid {
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding: 32px;
+  padding: 16px;
   background: transparent;
 }
 
@@ -2436,7 +2436,7 @@ h1 span {
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding: 32px;
+  padding: 16px;
   background: transparent;
 }
 
@@ -2514,9 +2514,9 @@ h1 span {
 /* BOTTOM BAR — brand (left) + links (right); fixed on desktop */
 .pgm-bottombar {
   position: fixed;
-  left: 32px;
-  right: 32px;
-  bottom: 32px;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
   z-index: 10;
   display: flex;
   align-items: flex-end;
