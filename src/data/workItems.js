@@ -115,43 +115,6 @@ export const WORK_ITEMS = [
       ],
     },
   },
-  {
-    video: "/vids/p-4.mp4",
-    isCaseStudy: true,
-    brand: "MakersPlace",
-    brandIcon: "/icons/MakersPlace.svg",
-    project: "Design System 2.0",
-    summary: "MakersPlace's legacy design system wasn't built to scale. Rebuilt from scratch with a modular foundation anchored by a flexible card system.",
-    tools: [
-      { name: "Figma", icon: "/preview-icon/Figma.svg" },
-      { name: "Cursor", icon: "/preview-icon/Cursor.svg" },
-    ],
-    previewUrl: "",
-    category: "Home / Profile Page",
-    className: "work-card-vid",
-    caseTabs: {
-      intro: [
-        { type: "text", label: "Project", content: "Profile Page" },
-        { type: "text", label: "Summary", content: "The updated modular design improved how user activity is organized and presented, making profiles more informative and cohesive. The card system helped create a seamless, engaging layout that helps users quickly understand an artist, collector, or curator and their activity." },
-      ],
-      team: [
-        { type: "text", label: "Leadership", content: "Bruno Orsini, Andre Camara, Michael Skinner, Claus Enevoldsen" },
-        { type: "text", label: "Sr. Product Manager", content: "Greg Harder" },
-        { type: "text", label: "Lead Product Designer", content: "Matt Silverman" },
-        { type: "text", label: "Lead Front-End Engineer", content: "Nikita Matusevich" },
-        { type: "text", label: "Lead Back-End Engineer", content: "Chong Yao" },
-        { type: "text", label: "Other Collaborators", content: "Liana Rogers, Nouman Saeed, Brian Shen, Jared Waniger, Parin Heidari, and many more." },
-      ],
-      overview: [
-        { type: "text", label: "Problem", content: "The previous profile page lacked structure and clarity, making it difficult to showcase an artist, collector, or curator’s activity in a meaningful way. It needed a redesign using the modular card system to create a more organized, scalable, and visually cohesive experience that effectively highlighted user activity and interactions." },
-        { type: "image", src: "/images/cs-p-4-overview-1.png", caption: "Before" },
-        { type: "text", label: "Goal", content: "Design and build a new profile page pattern using the modular card system, creating a clear, repeatable structure for how artist, collector, and curator activity is organized and presented." },
-        { type: "text", label: "Solution", content: "The redesigned Profile Page introduced a structured layout with an Artwork Hero card at the top, followed by modular sections that organized user activity across five shared entities: artists, artworks, series, exhibitions, and editorials. Each profile type—artist, collector, and curator—featured the same structured sections but displayed relevant content based on their activity. The modular card system ensured consistency, scalability, and a cohesive browsing experience." },
-        { type: "video", src: "/vids/cs-p-4-o-2.mp4", caption: "After" },
-        { type: "text", label: "Results", content: "The modular design improved the organization and presentation of user activity, making profiles more informative and visually cohesive. By leveraging the card system, the new layout provided a seamless and engaging experience, allowing users to explore an artist, collector, or curator’s impact at a glance." },
-      ],
-    },
-  },
 ];
 
 export default WORK_ITEMS;
