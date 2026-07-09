@@ -188,13 +188,13 @@ function Hero() {
           if (cancelled) return;
           seg.node.textContent += ch;
           keyClick();
-          await sleep(36 + Math.random() * 30);
+          await sleep(28 + Math.random() * 22);
         }
 
         if (cancelled) return;
         if (seg.brk === "enter") {
           enterClick();
-          await sleep(220);
+          await sleep(180);
         }
         // "silent" / null: line already exists, just continue
       }
