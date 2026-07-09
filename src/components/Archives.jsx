@@ -5,8 +5,6 @@ import ClockwiseCta from "./ClockwiseCta";
 
 import ProductCard, { PreviewModal } from "./ProductCard";
 import FEATURED_WORKS from "../data/featuredWorks";
-import ARCHIVES_EMBEDS from "../data/archivesEmbeds";
-
 /* ── Icons (same as Playground) ─────────────────────────────── */
 const SoundOnIcon = () => (
   <svg viewBox="0 0 16 16">
@@ -23,60 +21,8 @@ const SoundOffIcon = () => (
 
 
 /* ── Embed card — identical behaviour to Playground's ComponentCard ── */
-const EllipsisIcon = () => (
-  <svg viewBox="0 0 16 16">
-    <circle cx="3.5" cy="8" r="1.3" fill="currentColor" />
-    <circle cx="8" cy="8" r="1.3" fill="currentColor" />
-    <circle cx="12.5" cy="8" r="1.3" fill="currentColor" />
-  </svg>
-);
-
-function EmbedCard({ item, onOpen }) {
-  const [enabled, setEnabled] = useState(true);
-  const [hovered, setHovered] = useState(false);
-  const muted = !(item.sound && enabled && hovered);
-  const Comp = item.Component;
-
-  return (
-    <div
-      className="pg-card"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      <div className="pg-card-inner">
-        <div
-          className={`pg-embed${item.themed ? " pg-themed-embed" : ""}`}
-          style={item.embedBg ? { background: item.embedBg } : undefined}
-        >
-          <Comp muted={muted} />
-        </div>
-
-                <div className="pg-card-controls">
-          {item.sound && (
-            <button
-              className="pg-ctrl-btn"
-              aria-label="Toggle sound"
-              onClick={(e) => { e.stopPropagation(); setEnabled((v) => !v); }}
-            >
-              {enabled ? <SoundOnIcon /> : <SoundOffIcon />}
-            </button>
-          )}
-          <button
-            className="pg-ctrl-btn"
-            aria-label={item.open?.label || "Open preview"}
-            onClick={(e) => { e.stopPropagation(); onOpen(); }}
-          >
-            <EllipsisIcon />
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function Archives() {
   const outRef = useRef(null);
-  const [modalIndex, setModalIndex] = useState(null);
   const prevRef = useRef(null);
   const nextRef = useRef(null);
   const sceneRef = useRef(null);
@@ -525,26 +471,12 @@ function Archives() {
           <div className="row gx-4 gy-4">
             {FEATURED_WORKS.map((item, i) => (
               <div className="col-sm-6 col-xl-4" key={i}>
-                {i === 0 ? (
-                  <EmbedCard item={ARCHIVES_EMBEDS[0]} onOpen={() => setModalIndex(0)} />
-                ) : i === 1 ? (
-                  <EmbedCard item={ARCHIVES_EMBEDS[1]} onOpen={() => setModalIndex(1)} />
-                ) : (
-                  <ProductCard item={item} items={FEATURED_WORKS} index={i} />
-                )}
+                <ProductCard item={item} items={FEATURED_WORKS} index={i} />
               </div>
             ))}
           </div>
         </div>
       </section>
-
-      {modalIndex !== null && (
-        <PreviewModal
-          items={ARCHIVES_EMBEDS}
-          initialIndex={modalIndex}
-          onClose={() => setModalIndex(null)}
-        />
-      )}
     </>
   );
 }
