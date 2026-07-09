@@ -469,7 +469,7 @@ function Archives() {
       <section className="archives-projects">
         <div className="container">
           <div className="row gx-4 gy-4">
-            {FEATURED_WORKS.map((item, i) => (
+            {FEATURED_WORKS.filter((item) => !item.gallery && !item.mesh).map((item, i) => (
               <div className="col-sm-6 col-xl-4" key={i}>
                 <ProductCard item={item} items={FEATURED_WORKS} index={i} />
               </div>
