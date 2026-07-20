@@ -1186,9 +1186,6 @@ footer .container-fluid {
   border-radius: 0;
   width: 100%;
   height: auto;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  object-position: top;
   display: block;
 }
 
