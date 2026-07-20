@@ -351,7 +351,7 @@ header .container-fluid {
 /* ── PRODUCT CARD ── */
 .product-card {
   aspect-ratio: 1 / 1;
-  border-radius: 4px;
+  border-radius: 6px;
   border: 1px solid #eaeaea;
   padding: 48px;
   background: transparent;
@@ -467,6 +467,7 @@ footer .container-fluid {
   background: #000;
   overflow: hidden;
   padding: 32px;
+  border-radius: 6px;
 }
 
 .archive-preview-sound {
@@ -2247,7 +2248,7 @@ h1 span {
   position: relative;
   aspect-ratio: 1 / 1;
   background: #fcfcfc;
-  border-radius: 4px;
+  border-radius: 6px;
   border: 1px solid #eaeaea;
   overflow: hidden;
   transition: border-color 0.35s;
@@ -2265,7 +2266,7 @@ h1 span {
   top: 0% !important;
   object-fit: cover;
   display: block;
-  border-radius: 4px;
+  border-radius: 6px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   transition:
     transform 0.5s ease,
