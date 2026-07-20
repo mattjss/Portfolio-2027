@@ -1240,15 +1240,14 @@ footer .container-fluid {
     0 8px 32px rgba(0, 0, 0, 0.70);
 }
 
-/* sliding active-tab pill — position + width driven by --pill-x / --pill-w (set in JS) */
+/* sliding active-tab pill — left/right driven by JS, direction-aware for stretch effect */
 .cs-fs-tabbar::before {
   content: "";
   position: absolute;
   top: 12px;
   bottom: 12px;
-  left: 0;
-  width: var(--pill-w, 0);
-  transform: translateX(var(--pill-x, 0));
+  left: var(--pill-left, 0);
+  right: var(--pill-right, 0);
   background: rgba(255, 255, 255, 0.06);
   border: none;
   border-radius: 999px;
@@ -1258,8 +1257,22 @@ footer .container-fluid {
   pointer-events: none;
   z-index: 0;
   transition:
-    transform 400ms cubic-bezier(0.34, 1.06, 0.64, 1),
-    width    340ms cubic-bezier(0.16, 1, 0.3, 1);
+    left  300ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    right 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* moving right: right edge leads (snaps fast), left edge trails (stretches then catches up) */
+.cs-fs-tabbar[data-dir="right"]::before {
+  transition:
+    right 280ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    left  480ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* moving left: left edge leads (snaps fast), right edge trails (stretches then catches up) */
+.cs-fs-tabbar[data-dir="left"]::before {
+  transition:
+    left  280ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    right 480ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* TOP BAR — breadcrumb + close */
