@@ -1140,14 +1140,11 @@ footer .container-fluid {
   gap: 5px;
 }
 
-/* Section rhythm — hairline above each labeled block */
 .cs-fs-content--overview .cs-block:has(.cs-label) {
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
   padding-top: 24px;
 }
 
 .cs-fs-content--overview .cs-block:first-child {
-  border-top: none;
   padding-top: 0;
 }
 
@@ -1166,7 +1163,6 @@ footer .container-fluid {
   padding: 16px;
   border-radius: 6px;
   border: 1px solid #222;
-  overflow: hidden;
   background: transparent;
 }
 
@@ -1177,7 +1173,6 @@ footer .container-fluid {
   height: auto;
   width: 100%;
   display: block;
-  object-fit: contain;
 }
 
 @media screen and (max-width:1440px) {
