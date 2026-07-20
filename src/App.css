@@ -1069,8 +1069,6 @@ footer .container-fluid {
   margin: auto;
   width: 100%;
   max-width: 916px;
-  height: auto;
-  aspect-ratio: 45 / 26;
   padding: 16px;
   background: transparent;
   border: 1px solid #222;
@@ -1087,8 +1085,8 @@ footer .container-fluid {
 .cs-fs-preview.work-card-vid video,
 .cs-fs-preview.work-card-vid img {
   width: 100%;
-  height: 100%;
-  object-fit: contain;
+  height: auto;
+  display: block;
   inset: unset;
   border-radius: 0;
 }
