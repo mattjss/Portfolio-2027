@@ -44,7 +44,7 @@ const EllipsisIcon = () => (
 
 // Card for kind:"component" — desktop = hover to play, mobile = tap to play.
 function ComponentCard({ item, onOpen }) {
-    const [enabled, setEnabled] = useState(true);
+    const [enabled, setEnabled] = useState(false);
     const [active, setActive] = useState(false);
 
     // Touch / no-hover devices use tap instead of hover
@@ -115,7 +115,7 @@ function Playground() {
             const soundBtn = card.querySelector(".pg-sound-btn");
             const iframe = card.querySelector("iframe");
             const video = card.querySelector("video");
-            let muted = false, hovered = false;
+            let muted = true, hovered = false;
 
             const updateIcon = () => {
                 if (!soundBtn) return;

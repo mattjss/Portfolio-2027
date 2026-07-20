@@ -33,8 +33,8 @@ function Hero() {
   const h1Ref = useRef(null);
   const heroRef = useRef(null);
   const audibleRef = useRef(true);
-  const [heroMuted, setHeroMuted] = useState(false);
-  const mutedRef = useRef(false);
+  const [heroMuted, setHeroMuted] = useState(true);
+  const mutedRef = useRef(true);
 
   useEffect(() => {
     const h1 = h1Ref.current;

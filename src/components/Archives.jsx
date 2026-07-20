@@ -21,14 +21,64 @@ const SoundOffIcon = () => (
 
 
 /* ── Embed card — identical behaviour to Playground's ComponentCard ── */
+const EllipsisIcon = () => (
+  <svg viewBox="0 0 16 16">
+    <circle cx="3.5" cy="8" r="1.3" fill="currentColor" />
+    <circle cx="8" cy="8" r="1.3" fill="currentColor" />
+    <circle cx="12.5" cy="8" r="1.3" fill="currentColor" />
+  </svg>
+);
+
+function EmbedCard({ item, onOpen }) {
+  const [enabled, setEnabled] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const muted = !(item.sound && enabled && hovered);
+  const Comp = item.Component;
+
+  return (
+    <div
+      className="pg-card"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <div className="pg-card-inner">
+        <div
+          className={`pg-embed${item.themed ? " pg-themed-embed" : ""}`}
+          style={item.embedBg ? { background: item.embedBg } : undefined}
+        >
+          <Comp muted={muted} />
+        </div>
+
+                <div className="pg-card-controls">
+          {item.sound && (
+            <button
+              className="pg-ctrl-btn"
+              aria-label="Toggle sound"
+              onClick={(e) => { e.stopPropagation(); setEnabled((v) => !v); }}
+            >
+              {enabled ? <SoundOnIcon /> : <SoundOffIcon />}
+            </button>
+          )}
+          <button
+            className="pg-ctrl-btn"
+            aria-label={item.open?.label || "Open preview"}
+            onClick={(e) => { e.stopPropagation(); onOpen(); }}
+          >
+            <EllipsisIcon />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 function Archives() {
   const outRef = useRef(null);
   const prevRef = useRef(null);
   const nextRef = useRef(null);
   const sceneRef = useRef(null);
   const heroRef = useRef(null);
-  const [heroMuted, setHeroMuted] = useState(false);
-  const mutedRef = useRef(false);
+  const [heroMuted, setHeroMuted] = useState(true);
+  const mutedRef = useRef(true);
 
   useEffect(() => {
     const out = outRef.current;

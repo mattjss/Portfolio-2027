@@ -23,8 +23,8 @@ function About() {
   const nextRef = useRef(null);
   const sceneRef = useRef(null);
   const heroRef = useRef(null);
-  const [heroMuted, setHeroMuted] = useState(false);
-  const mutedRef = useRef(false);
+  const [heroMuted, setHeroMuted] = useState(true);
+  const mutedRef = useRef(true);
 
   useEffect(() => {
     const out = outRef.current;

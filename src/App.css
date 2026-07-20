@@ -1170,7 +1170,7 @@ footer .container-fluid {
 
 .cs-fs-content--overview .cs-block--media img,
 .cs-fs-content--overview .cs-block--media video {
-  border-radius: 0;
+  border-radius: 6px;
   max-height: none;
   height: 100%;
   width: 100%;
