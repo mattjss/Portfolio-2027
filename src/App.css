@@ -1071,8 +1071,11 @@ footer .container-fluid {
   max-width: 916px;
   height: auto;
   aspect-ratio: 45 / 26;
-  padding: 0;
+  padding: 16px;
   background: transparent;
+  border: 1px solid #222;
+  border-radius: 6px;
+  overflow: hidden;
 }
 
 @media screen and (max-width:1440px) {
@@ -1087,8 +1090,7 @@ footer .container-fluid {
   height: 100%;
   object-fit: contain;
   inset: unset;
-  border-radius: 6px;
-  box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.35);
+  border-radius: 0;
 }
 
 /* INTRO / TEAM — text column (sits right-of-center, vertically centered) */
