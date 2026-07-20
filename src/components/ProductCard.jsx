@@ -256,7 +256,7 @@ function CaseStudyModal({ item, onClose }) {
       return (
         <div key={i} className="cs-block">
           <div className="cs-block--media">
-            <img src={block.src} srcSet={block.srcSet} alt={block.alt || ""} />
+            <img src={block.src} srcSet={block.srcSet} alt={block.alt || ""} className={block.natural ? "cs-img--natural" : ""} />
           </div>
           {block.caption && <span className="cs-media-caption">{block.caption}</span>}
         </div>

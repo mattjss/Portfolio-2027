@@ -33,7 +33,7 @@ export const WORK_ITEMS = [
         { type: "image", src: "/images/cs-overview-1.png", caption: "Primary Palette" },
         { type: "image", src: "/images/cs-overview-3.png", caption: "High Contrast" },
         { type: "image", src: "/images/cs-overview-5.png", caption: "Card System - Hero" },
-        { type: "image", src: "/images/cs-overview-6.png", caption: "Card System - Standard " },
+        { type: "image", src: "/images/cs-overview-6.png", caption: "Card System - Standard ", natural: true },
       ],
     },
   },
