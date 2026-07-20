@@ -1,4 +1,5 @@
-import { useState, useEffect, useLayoutEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import MeshCanvas from "./MeshCanvas";
 import AgenticLoaderGallery from "./AgenticLoaderGallery";
 
@@ -200,10 +201,6 @@ function RegularInfo({ item }) {
 function CaseStudyModal({ item, onClose }) {
   const [activeTab, setActiveTab] = useState("design");
   const stageRef = useRef(null);
-  const tabbarRef = useRef(null);
-  const tabRefs = useRef({});
-  const [pill, setPill] = useState({ left: 0, right: 0 });
-  const prevPillLeft = useRef(null); // null = not yet measured (skip direction detection)
 
   const TABS = [
     { key: "design", label: "Design System" },
@@ -212,43 +209,11 @@ function CaseStudyModal({ item, onClose }) {
     { key: "overview", label: "Overview" },
   ];
 
-  // measure the active tab — computes left/right and sets direction on the tabbar
-  const measurePill = useCallback(() => {
-    const el = tabRefs.current[activeTab];
-    const bar = tabbarRef.current;
-    if (!el || !bar) return;
-    const newLeft = el.offsetLeft;
-    const newRight = bar.offsetWidth - (el.offsetLeft + el.offsetWidth);
-    if (prevPillLeft.current !== null) {
-      const dir = newLeft > prevPillLeft.current ? "right" : newLeft < prevPillLeft.current ? "left" : null;
-      if (dir) bar.dataset.dir = dir;
-    }
-    prevPillLeft.current = newLeft;
-    setPill({ left: newLeft, right: newRight });
-  }, [activeTab]);
-
-  // re-measure on tab change / project change (before paint, so it slides from the old spot)
-  useLayoutEffect(() => { measurePill(); }, [measurePill, item]);
-
-  // re-measure on resize and once webfonts finish loading (label widths shift)
-  useEffect(() => {
-    measurePill();
-    window.addEventListener("resize", measurePill);
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(measurePill);
-    }
-    return () => window.removeEventListener("resize", measurePill);
-  }, [measurePill]);
-
-  // reset to first tab + top when the project changes
   useEffect(() => {
     setActiveTab("design");
-    prevPillLeft.current = null; // clear direction memory so next measure doesn't misfire
-    if (tabbarRef.current) delete tabbarRef.current.dataset.dir;
     if (stageRef.current) stageRef.current.scrollTop = 0;
   }, [item]);
 
-  // scroll the stage back to top whenever the tab changes
   useEffect(() => {
     if (stageRef.current) stageRef.current.scrollTop = 0;
   }, [activeTab]);
@@ -329,19 +294,21 @@ function CaseStudyModal({ item, onClose }) {
       <span className="cs-fs-crumb">{item.category}</span>
 
       {/* BOTTOM-RIGHT — tab bar */}
-      <div
-        className="cs-fs-tabbar"
-        ref={tabbarRef}
-        style={{ "--pill-left": `${pill.left}px`, "--pill-right": `${pill.right}px` }}
-      >
+      <div className="cs-fs-tabbar">
         {TABS.map((t) => (
           <button
             key={t.key}
-            ref={(el) => { tabRefs.current[t.key] = el; }}
             className={`cs-fs-tab ${activeTab === t.key ? "active" : ""}`}
             onClick={() => setActiveTab(t.key)}
           >
-            {t.label}
+            {activeTab === t.key && (
+              <motion.div
+                layoutId="tab-indicator"
+                className="cs-fs-tab-pill"
+                transition={{ type: "spring", duration: 0.4, bounce: 0 }}
+              />
+            )}
+            <span className="cs-fs-tab-label">{t.label}</span>
           </button>
         ))}
       </div>
