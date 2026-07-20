@@ -4,7 +4,6 @@ export const FEATURED_WORKS = [
         image: "/images/am-img-1.png",
         imageSrcSet:
             "/images/am-img-1.png 1x, /images/am-img-1@2x.png 2x, /images/am-img-1@3x.png 3x",
-        href: "https://makersplace.com/",
         className: "work-card-img work-card-img-1",
     },
     {

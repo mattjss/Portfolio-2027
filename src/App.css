@@ -1161,11 +1161,14 @@ footer .container-fluid {
 
 /* Media — overview */
 .cs-fs-content--overview .cs-block--media {
+  display: block;
+  height: auto;
+  width: 100%;
+  overflow: hidden;
   padding: 16px;
   aspect-ratio: 16 / 9;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  overflow: hidden;
   background: transparent;
   display: flex;
   align-items: center;
@@ -1175,9 +1178,8 @@ footer .container-fluid {
 .cs-fs-content--overview .cs-block--media img,
 .cs-fs-content--overview .cs-block--media video {
   border-radius: 0;
-  max-height: 100%;
+  width: 100%;
   max-width: 100%;
-  width: auto;
   height: auto;
   object-fit: contain;
 }
