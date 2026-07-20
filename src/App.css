@@ -1178,9 +1178,10 @@ footer .container-fluid {
 
 .cs-fs-content--overview .cs-block--media video {
   border-radius: 0;
-  height: auto;
+  height: 360px;
   width: 100%;
-  max-height: 480px;
+  object-fit: cover;
+  object-position: top;
   display: block;
 }
 
