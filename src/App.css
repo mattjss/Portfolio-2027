@@ -1160,6 +1160,8 @@ footer .container-fluid {
 
 /* Media — overview */
 .cs-fs-content--overview .cs-block--media {
+  display: block;
+  height: auto;
   padding: 16px;
   border-radius: 6px;
   border: 1px solid #222;
