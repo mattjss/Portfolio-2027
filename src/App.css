@@ -1069,6 +1069,7 @@ footer .container-fluid {
   margin: auto;
   width: 100%;
   max-width: 916px;
+  height: auto;
   padding: 16px;
   background: transparent;
   border: 1px solid #222;
