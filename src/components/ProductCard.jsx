@@ -202,8 +202,7 @@ function CaseStudyModal({ item, onClose }) {
   const stageRef = useRef(null);
   const tabbarRef = useRef(null);
   const tabRefs = useRef({});
-  const [pill, setPill] = useState({ left: 0, right: 0 });
-  const prevPillLeft = useRef(null); // null = not yet measured (skip direction detection)
+  const [pill, setPill] = useState({ x: 0, w: 0 });
 
   const TABS = [
     { key: "design", label: "Design System" },
@@ -212,19 +211,10 @@ function CaseStudyModal({ item, onClose }) {
     { key: "overview", label: "Overview" },
   ];
 
-  // measure the active tab — computes left/right and sets direction on the tabbar
+  // measure the active tab so the sliding pill can match its position + width
   const measurePill = useCallback(() => {
     const el = tabRefs.current[activeTab];
-    const bar = tabbarRef.current;
-    if (!el || !bar) return;
-    const newLeft = el.offsetLeft;
-    const newRight = bar.offsetWidth - (el.offsetLeft + el.offsetWidth);
-    if (prevPillLeft.current !== null) {
-      const dir = newLeft > prevPillLeft.current ? "right" : newLeft < prevPillLeft.current ? "left" : null;
-      if (dir) bar.dataset.dir = dir;
-    }
-    prevPillLeft.current = newLeft;
-    setPill({ left: newLeft, right: newRight });
+    if (el) setPill({ x: el.offsetLeft, w: el.offsetWidth });
   }, [activeTab]);
 
   // re-measure on tab change / project change (before paint, so it slides from the old spot)
@@ -243,8 +233,6 @@ function CaseStudyModal({ item, onClose }) {
   // reset to first tab + top when the project changes
   useEffect(() => {
     setActiveTab("design");
-    prevPillLeft.current = null; // clear direction memory so next measure doesn't misfire
-    if (tabbarRef.current) delete tabbarRef.current.dataset.dir;
     if (stageRef.current) stageRef.current.scrollTop = 0;
   }, [item]);
 
@@ -332,7 +320,7 @@ function CaseStudyModal({ item, onClose }) {
       <div
         className="cs-fs-tabbar"
         ref={tabbarRef}
-        style={{ "--pill-left": `${pill.left}px`, "--pill-right": `${pill.right}px` }}
+        style={{ "--pill-x": `${pill.x}px`, "--pill-w": `${pill.w}px` }}
       >
         {TABS.map((t) => (
           <button
