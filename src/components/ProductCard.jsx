@@ -1,4 +1,5 @@
 import { useState, useEffect, useLayoutEffect, useCallback, useRef } from "react";
+import { motion } from "framer-motion";
 import MeshCanvas from "./MeshCanvas";
 import AgenticLoaderGallery from "./AgenticLoaderGallery";
 
@@ -317,11 +318,12 @@ function CaseStudyModal({ item, onClose }) {
       <span className="cs-fs-crumb">{item.category}</span>
 
       {/* BOTTOM-RIGHT — tab bar */}
-      <div
-        className="cs-fs-tabbar"
-        ref={tabbarRef}
-        style={{ "--pill-x": `${pill.x}px`, "--pill-w": `${pill.w}px` }}
-      >
+      <div className="cs-fs-tabbar" ref={tabbarRef}>
+        <motion.div
+          className="cs-fs-pill"
+          animate={{ x: pill.x, width: pill.w }}
+          transition={{ type: "spring", duration: 0.4, bounce: 0 }}
+        />
         {TABS.map((t) => (
           <button
             key={t.key}
