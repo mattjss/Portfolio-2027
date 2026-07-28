@@ -16,7 +16,7 @@ function getLogoSize(scrollY, width) {
 }
 
 function Header() {
-    const [logoSize, setLogoSize] = useState(64);
+    const [logoSize, setLogoSize] = useState(() => getLogoSize(window.scrollY, window.innerWidth));
     const canvasRef = useRef(null);
     const orbRef = useRef(null);
     const headerRef = useRef(null);

@@ -1,10 +1,5 @@
 // data/featuredWorks.js
 export const FEATURED_WORKS = [
-    { gallery: true, className: "work-card-vid gallery-tile" },
-    {
-  mesh: true,
-  className: "work-card-vid mesh-card",
-},
     {
         image: "/images/am-img-1.png",
         imageSrcSet:
