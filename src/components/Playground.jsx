@@ -44,7 +44,7 @@ const EllipsisIcon = () => (
 
 // Card for kind:"component" — desktop = hover to play, mobile = tap to play.
 function ComponentCard({ item, onOpen }) {
-    const [enabled, setEnabled] = useState(false);
+    const [enabled, setEnabled] = useState(true);
     const [active, setActive] = useState(false);
 
     // Touch / no-hover devices use tap instead of hover
