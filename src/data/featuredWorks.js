@@ -388,13 +388,6 @@ export const FEATURED_WORKS = [
         className: "work-card-img",
     },
     {
-        image: "/images/a-img-2.png",
-        imageSrcSet:
-            "/images/a-img-2.png 1x, /images/a-img-2@2x.png 2x, /images/a-img-2@3x.png 3x",
-        href: "https://olympusdao.finance/",
-        className: "work-card-img",
-    },
-    {
         image: "/images/a-img-3.png",
         imageSrcSet:
             "/images/a-img-3.png 1x, /images/a-img-3@2x.png 2x, /images/a-img-3@3x.png 3x",
