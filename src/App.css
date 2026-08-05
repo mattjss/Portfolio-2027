@@ -2351,7 +2351,7 @@ h1 span {
   background: transparent;
   box-shadow: none;
   aspect-ratio: 1920 / 1114;
-  width: clamp(280px, min(92vw, calc(68vh * 1.724)), 900px);
+  width: clamp(280px, 92vw, 900px);
 }
 
 @media screen and (min-width: 769px) {
