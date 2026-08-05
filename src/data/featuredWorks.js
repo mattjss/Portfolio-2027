@@ -429,6 +429,13 @@ export const FEATURED_WORKS = [
         href: "https://www.actionnetwork.com/",
         className: "work-card-img work-card-img-7",
     },
+    {
+        image: "/images/a-img-8.png",
+        imageSrcSet:
+            "/images/a-img-8.png 1x, /images/a-img-8@2x.png 2x, /images/a-img-8@3x.png 3x",
+        href: "https://www.actionnetwork.com/",
+        className: "work-card-img work-card-img-7",
+    },
 ];
 
 export default FEATURED_WORKS;
