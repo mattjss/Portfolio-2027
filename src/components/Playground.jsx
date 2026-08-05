@@ -195,7 +195,7 @@ function Playground() {
                                                     />
                                                 )}
                                                 {item.kind === "video" && (
-                                                    <video src={item.src} muted loop playsInline style={item.mediaStyle} />
+                                                    <video src={item.src} autoPlay muted loop playsInline style={item.mediaStyle} />
                                                 )}
                                                 {item.kind === "image" && (
                                                     <img src={item.src} alt={item.alt || ""} style={item.mediaStyle} />
