@@ -2350,11 +2350,13 @@ h1 span {
 .archive-preview.pgm-preview.pgm-preview--full-bleed {
   background: transparent;
   box-shadow: none;
+  aspect-ratio: 1920 / 1114;
+  width: clamp(280px, min(92vw, calc(68vh * 1.724)), 900px);
 }
 
 @media screen and (min-width: 769px) {
   .pgm-slide--full-bleed-info {
-    margin-top: max(0px, calc(50vh - 445px));
+    margin-top: max(0px, calc(50vh - 260px));
     padding-top: calc(50vh - 120px);
   }
 }
