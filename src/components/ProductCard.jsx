@@ -418,7 +418,7 @@ function RegularModal({ item, onClose, soundEnabled, setSoundEnabled }) {
         <div className="pgm-track" ref={trackRef}>
           {/* SLIDE 1 — preview */}
           <div className="pgm-slide pgm-slide--preview">
-          <div className={`archive-preview pgm-preview ${item.className || ""}`}>
+          <div className={`archive-preview pgm-preview ${item.className || ""}${item.fullBleed ? " pgm-preview--full-bleed" : ""}`}>
             {PreviewComp ? (
               <PreviewComp muted={muted} />
             ) : item.video ? (
@@ -605,7 +605,7 @@ const media = item?.video ? (
         className={`product-card ${item?.className || ""}`}
         onMouseEnter={handleEnter}
         onMouseLeave={handleLeave}
-        style={{ cursor: "pointer", display: "block" }}
+        style={{ cursor: "pointer" }}
       >
         {media}
       </a>

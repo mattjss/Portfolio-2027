@@ -24,6 +24,23 @@ const CATEGORY = "Playground / Experiments";
 
 const PLAYGROUND_ITEMS = [
   {
+    kind: "video",
+    src: "/vids/cedar.mp4",
+    video: "/vids/cedar.mp4",
+    brand: "CedarOS",
+    project: "CedarOS",
+    summary: "cedarOS is a predevelopment tool that helps developers quickly understand what a site can yield, compare scenarios, and move from concept to permit faster while tracking everything in one place. It centralizes zoning, risk, unit counts, and project stages so developers spend less time wrangling data and more time advancing buildable, approvable projects.",
+    tools: [
+      { name: "Figma", icon: "/icons/figma.svg" },
+      { name: "Claude", icon: "/icons/claude.svg" },
+    ],
+    previewUrl: "https://www.cedar.build/",
+    category: CATEGORY,
+    className: "work-card-vid",
+    embedClass: "pg-video-contain",
+    fullBleed: true,
+  },
+  {
     kind: "component",
     Component: FlockEmbed,
     sound: true,

@@ -180,7 +180,7 @@ function Playground() {
                                     <div className="pg-card" data-dom="1">
                                         <div className="pg-card-inner">
                                             <div
-                                                className={`pg-embed${item.themed ? " pg-themed-embed" : ""}`}
+                                                className={`pg-embed${item.themed ? " pg-themed-embed" : ""}${item.embedClass ? ` ${item.embedClass}` : ""}`}
                                                 style={item.embedBg ? { background: item.embedBg } : undefined}
                                             >
                                                 {item.kind === "iframe" && (
