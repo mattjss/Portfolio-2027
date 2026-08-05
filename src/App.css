@@ -2539,6 +2539,10 @@ h1 span {
   padding: max(88px, calc(50vh - 325px)) 64px 35vh;
 }
 
+.pgm-track--full-bleed {
+  padding-top: max(88px, calc(50vh - 260px));
+}
+
 .pgm-slide {
   display: flex;
   justify-content: center;
