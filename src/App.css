@@ -2336,6 +2336,7 @@ h1 span {
   width: 100%;
   height: auto;
   object-fit: contain !important;
+  border-radius: 8px;
 }
 
 @media screen and (max-width: 1440px) {
@@ -2349,6 +2350,10 @@ h1 span {
 .archive-preview.pgm-preview.pgm-preview--full-bleed {
   background: transparent;
   box-shadow: none;
+}
+
+.archive-preview.pgm-preview.pgm-preview--full-bleed video {
+  border-radius: 8px;
 }
 
 .pg-embed iframe {
