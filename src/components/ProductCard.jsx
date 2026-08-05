@@ -415,9 +415,9 @@ function RegularModal({ item, onClose, soundEnabled, setSoundEnabled }) {
 
       {/* CENTER — stage: track (carousel) + dots */}
       <div className="pgm-stage" ref={stageRef}>
-        <div className="pgm-track" ref={trackRef}>
+        <div className={`pgm-track${item.fullBleed ? " pgm-track--full-bleed" : ""}`} ref={trackRef}>
           {/* SLIDE 1 — preview */}
-          <div className="pgm-slide pgm-slide--preview">
+          <div className={`pgm-slide pgm-slide--preview${item.fullBleed ? " pgm-slide--full-bleed-preview" : ""}`}>
           <div className={`archive-preview pgm-preview ${item.className || ""}${item.fullBleed ? " pgm-preview--full-bleed" : ""}`}>
             {PreviewComp ? (
               <PreviewComp muted={muted} />
@@ -452,7 +452,7 @@ function RegularModal({ item, onClose, soundEnabled, setSoundEnabled }) {
         </div>
 
         {/* SLIDE 2 — info */}
-        <div className="pgm-slide pgm-slide--info">
+        <div className={`pgm-slide pgm-slide--info${item.fullBleed ? " pgm-slide--full-bleed-info" : ""}`}>
           <div className="archive-info-content">
             <div>
               <h2>Project</h2>

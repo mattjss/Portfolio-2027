@@ -2352,6 +2352,23 @@ h1 span {
   box-shadow: none;
 }
 
+@media screen and (min-width: 769px) {
+  .pgm-track--full-bleed {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .pgm-slide--full-bleed-preview {
+    min-height: 100vh;
+    align-items: center;
+  }
+
+  .pgm-slide--full-bleed-info {
+    min-height: 100vh;
+    align-items: center;
+  }
+}
+
 .archive-preview.pgm-preview.pgm-preview--full-bleed video {
   border-radius: 8px;
 }
