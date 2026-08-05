@@ -2540,7 +2540,13 @@ h1 span {
 }
 
 .pgm-track--full-bleed {
-  padding-top: max(88px, calc(50vh - 260px));
+  padding-top: 0;
+}
+
+.pgm-slide--full-bleed-preview {
+  height: 100vh;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .pgm-slide {
