@@ -434,7 +434,8 @@ footer .container-fluid {
   inset: 0;
   z-index: 1000;
   display: flex;
-  height: max(100vh, 100svh);
+  height: 100vh;
+  height: 100svh;
 }
 
 .archive-modal .modal-content {
@@ -442,6 +443,7 @@ footer .container-fluid {
   backdrop-filter: blur(4px);
   border: none;
   min-height: 100vh;
+  min-height: 100svh;
   width: 100%;
   position: relative;
   display: flex;
@@ -453,6 +455,7 @@ footer .container-fluid {
 /* WRAPPER */
 .archive-wrapper {
   height: 100vh;
+  height: 100svh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1364,11 +1367,13 @@ footer .container-fluid {
     display: contents;
     flex-direction: column;
     padding: 0;
-    min-height: max(100vh, 100svh);
+    min-height: 100vh;
+    min-height: 100svh;
   }
 
   .archive-modal .modal-content {
-    min-height: max(100vh, 100svh);
+    min-height: 100vh;
+    min-height: 100svh;
     background-color: var(--offcanvas-bg);
     backdrop-filter: blur(0px);
   }
@@ -2484,6 +2489,7 @@ h1 span {
   background: #0A0A0A !important;
   backdrop-filter: none !important;
   height: 100vh;
+  height: 100svh;
   overflow: hidden;
 }
 
