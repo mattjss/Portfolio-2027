@@ -147,6 +147,23 @@ function Playground() {
                 if (hovered) iframeMsg(iframe, muted);
             };
 
+            const isTouch = window.matchMedia("(hover: none)").matches ||
+                window.matchMedia("(pointer: coarse)").matches ||
+                window.innerWidth <= 768;
+
+            let io = null;
+            if (isTouch && video) {
+                io = new IntersectionObserver(([e]) => {
+                    if (e.isIntersecting && e.intersectionRatio >= 0.5) {
+                        video.play().catch(() => {});
+                    } else {
+                        video.pause();
+                        video.currentTime = 0;
+                    }
+                }, { threshold: [0, 0.5, 1] });
+                io.observe(card);
+            }
+
             card.addEventListener("mouseenter", onEnter);
             card.addEventListener("mouseleave", onLeave);
             if (soundBtn) soundBtn.addEventListener("click", onSound);
@@ -155,6 +172,7 @@ function Playground() {
                 card.removeEventListener("mouseenter", onEnter);
                 card.removeEventListener("mouseleave", onLeave);
                 if (soundBtn) soundBtn.removeEventListener("click", onSound);
+                if (io) io.disconnect();
             };
         });
 
